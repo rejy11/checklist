@@ -40,6 +40,8 @@ class App extends StatelessWidget {
           primaryColor: Colors.indigo[500],
           accentColor: Colors.amber[500],
           backgroundColor: colourScheme.background,
+          errorColor: Colors.red[600],
+          fontFamily: 'Comfortaa',
         ),
         home: FoldersScreen(),
       ),

@@ -1,14 +1,14 @@
 class FolderModel {
-  final int id;
-  int folderName;
+  int id;
+  String folderName;
   DateTime dateTimeCreated;
   int numberOfLists;
   //List<ListModel> lists;
 
-  FolderModel(
+  FolderModel({
     this.id,
     this.folderName,
     this.dateTimeCreated,
     this.numberOfLists,
-  );
+  });
 }

@@ -6,5 +6,5 @@ final serviceLocator = GetIt.instance;
 
 Future<void> init() async {
   serviceLocator.registerSingleton<LocalDatabase>(LocalDatabase());
-  serviceLocator.registerSingleton<ListRepository>(ListRepository());
+  serviceLocator.registerSingleton<ListRepository>(ListRepository(serviceLocator()));
 }

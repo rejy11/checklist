@@ -4,6 +4,8 @@ import 'package:checklist/models/folder_model.dart';
 class ListRepository {
   LocalDatabase database;
 
+  ListRepository(this.database);
+
   Future<List<FolderModel>> getFolders() async {
     return await database.folders();
   }
@@ -12,5 +14,17 @@ class ListRepository {
     final folders = await database.folders();
     final folder = folders.firstWhere((f) => f.id == id);
     return folder;
+  }
+
+  Future insertFolder(FolderModel folder) async {
+    await database.insertFolder(folder);
+  }
+
+  Future deleteFolder(int id) async {
+    await database.deleteFolder(id);
+  }
+
+  Future updateFolder(FolderModel folder) async {
+    await database.updateFolder(folder);
   }
 }
