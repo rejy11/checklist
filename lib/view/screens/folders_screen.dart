@@ -46,29 +46,29 @@ class _FoldersScreenState extends State<FoldersScreen>
           'Your Folders',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        actions: <Widget>[
-          Consumer<FoldersProvider>(
-            builder:
-                (BuildContext context, FoldersProvider value, Widget child) {
-              return value.deleteFolderMode
-                  ? Row(
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.cancel),
-                          onPressed: () {
-                            value.toggleDeleteFolderMode(false);
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {},
-                        ),
-                      ],
-                    )
-                  : Row();
-            },
-          ),
-        ],
+        // actions: <Widget>[
+        //   Consumer<FoldersProvider>(
+        //     builder:
+        //         (BuildContext context, FoldersProvider value, Widget child) {
+        //       return value.deleteFolderMode
+        //           ? Row(
+        //               children: <Widget>[
+        //                 IconButton(
+        //                   icon: Icon(Icons.cancel),
+        //                   onPressed: () {
+        //                     value.toggleDeleteFolderMode(false);
+        //                   },
+        //                 ),
+        //                 IconButton(
+        //                   icon: Icon(Icons.delete),
+        //                   onPressed: () {},
+        //                 ),
+        //               ],
+        //             )
+        //           : Row();
+        //     },
+        //   ),
+        // ],
       ),
       body: Column(
         children: <Widget>[

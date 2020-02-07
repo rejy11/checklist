@@ -1,3 +1,4 @@
+import 'package:checklist/view/widgets/core/icon_above_text_button.dart';
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -56,21 +57,23 @@ class FoldersListWidget extends StatelessWidget {
                 child: ListTile(
                   title: Text(folder.folderName),
                   leading: Column(
-                    mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Consumer<FoldersProvider>(
-                        builder: (BuildContext context, value, Widget child) {
-                          return value.deleteFolderMode
-                              ? CircularCheckBox(
-                                  value: false,
-                                  onChanged: (value) {},
-                                )
-                              : Icon(
-                                  Icons.folder,
-                                  color: Theme.of(context).accentColor,
-                                );
-                        },
+                      Container(
+                        width: 50,
+                        child: Consumer<FoldersProvider>(
+                          builder: (BuildContext context, value, Widget child) {
+                            return value.deleteFolderMode
+                                ? CircularCheckBox(
+                                    value: false,
+                                    onChanged: (value) {},
+                                  )
+                                : Icon(
+                                    Icons.folder,
+                                    color: Theme.of(context).accentColor,
+                                  );
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -81,6 +84,47 @@ class FoldersListWidget extends StatelessWidget {
                   onLongPress: () {
                     Provider.of<FoldersProvider>(context, listen: false)
                         .toggleDeleteFolderMode(true);
+                    showBottomSheet(
+                      elevation: 5,
+                      clipBehavior: Clip.hardEdge,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(25),
+                          topRight: Radius.circular(25),
+                        ),
+                      ),
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          height: 70,
+                          color: Theme.of(context).colorScheme.surface,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              Expanded(
+                                child: IconAboveTextButton(
+                                  icon: Icon(Icons.cancel),
+                                  text: 'Cancel',
+                                  textColour: Colors.black,
+                                  opacity: 0.65,
+                                ),
+                              ),
+                              VerticalDivider(
+                                color: Colors.black26,
+                              ),
+                              Expanded(
+                                child: IconAboveTextButton(
+                                  icon: Icon(Icons.delete),
+                                  text: 'Delete',
+                                  textColour: Colors.black,
+                                  opacity: 0.65,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
               ),

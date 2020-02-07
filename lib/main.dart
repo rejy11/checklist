@@ -26,6 +26,7 @@ class App extends StatelessWidget {
     secondary: Colors.amber[500],
     surface: Colors.grey[100],
     onSurface: Colors.black,
+    
   );
 
   @override
@@ -42,6 +43,7 @@ class App extends StatelessWidget {
           backgroundColor: colourScheme.background,
           errorColor: Colors.red[600],
           fontFamily: 'Comfortaa',
+          primaryColorLight: Color.fromARGB(255, 117, 125, 232),
         ),
         home: FoldersScreen(),
       ),
