@@ -56,29 +56,42 @@ class FoldersListWidget extends StatelessWidget {
                 child: ListTile(
                   title: Text(folder.folderName),
                   leading: Column(
-                    mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Consumer<FoldersProvider>(
-                        builder: (BuildContext context, value, Widget child) {
-                          return value.deleteFolderMode
-                              ? CircularCheckBox(
-                                  value: false,
-                                  onChanged: (value) {},
-                                )
-                              : Icon(
-                                  Icons.folder,
-                                  color: Theme.of(context).accentColor,
-                                );
-                        },
+                      Container(
+                        width: 50,
+                        child: Icon(
+                          Icons.folder,
+                          color: Theme.of(context).accentColor,
+                        ),
                       ),
                     ],
                   ),
+                  // leading: Column(
+                  //   mainAxisSize: MainAxisSize.min,
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: <Widget>[
+                  //     Consumer<FoldersProvider>(
+                  //       builder: (BuildContext context, value, Widget child) {
+                  //         return value.deleteFolderMode
+                  //             ? CircularCheckBox(
+                  //                 value: false,
+                  //                 onChanged: (value) {},
+                  //               )
+                  //             : Icon(
+                  //                 Icons.folder,
+                  //                 color: Theme.of(context).accentColor,
+                  //               );
+                  //       },
+                  //     ),
+                  //   ],
+                  // ),
                   subtitle: folder.numberOfLists != 1
                       ? Text('${folder.numberOfLists} items')
                       : Text('${folder.numberOfLists} item'),
                   onTap: () {},
                   onLongPress: () {
+                    //replace this widget with DeleteFoldersListWidget
                     Provider.of<FoldersProvider>(context, listen: false)
                         .toggleDeleteFolderMode(true);
                   },

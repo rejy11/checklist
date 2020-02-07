@@ -1,4 +1,5 @@
 import 'package:checklist/providers/folders_provider.dart';
+import 'package:checklist/view/widgets/delete_folders_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -75,16 +76,26 @@ class _FoldersScreenState extends State<FoldersScreen>
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(top: 5),
-              child: FoldersListWidget(),
+              child: Consumer<FoldersProvider>(
+                builder: (BuildContext context, FoldersProvider value,
+                    Widget child) {
+                  // if (value.deleteFolderMode) {
+                  //   return Stack(
+                  //     children: <Widget>[
+
+                  //     ],
+                  //   );
+                  // }
+
+                  return value.deleteFolderMode
+                      ? DeleteFoldersListWidget()
+                      : FoldersListWidget();
+                },
+              ),
             ),
           ),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () => _newFolderDialog(context),
-      //   child: Icon(Icons.add),
-      //   elevation: 1,
-      // ),
       floatingActionButton: Consumer<FoldersProvider>(
         builder: (BuildContext context, FoldersProvider value, Widget child) {
           if (!value.deleteFolderMode) {
@@ -100,21 +111,6 @@ class _FoldersScreenState extends State<FoldersScreen>
               elevation: 1,
             ),
           );
-          // return Column(children: [
-          //   if (!value.deleteFolderMode)
-          //     FloatingActionButton(
-          //       onPressed: () => _newFolderDialog(context),
-          //       child: Icon(Icons.add),
-          //     )
-          // ]);
-          // return Opacity(
-          //   opacity: !value.deleteFolderMode ? 1 : 0,
-          //   child: FloatingActionButton(
-          //     onPressed: () => _newFolderDialog(context),
-          //     child: Icon(Icons.add),
-          //     elevation: 1,
-          //   ),
-          // );
         },
       ),
     );
