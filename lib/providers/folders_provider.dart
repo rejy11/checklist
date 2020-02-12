@@ -1,28 +1,55 @@
 import 'package:checklist/models/folder_model.dart';
+
+import '../entities/folder_entity.dart';
 import 'package:checklist/repository/list_repository.dart';
 import 'package:flutter/foundation.dart';
 
 class FoldersProvider with ChangeNotifier {
   ListRepository _listRepository;
   bool deleteFolderMode = false;
+  List<int> _checkedFolders = List<int>();
 
   FoldersProvider(this._listRepository);
 
   Future<List<FolderModel>> getFolders() async {
-    final folders = await _listRepository.getFolders();
-    return folders;
+    print('folders_provider - getFolders()');
+    final folderEntities = await _listRepository.getFolders();
+    var folderModels = List<FolderModel>();
+    for (var folderEntity in folderEntities) {
+      var folderModel = FolderModel(
+        id: folderEntity.id,
+        name: folderEntity.folderName,
+        dateTimeCreated: folderEntity.dateTimeCreated,
+        isFavourite: folderEntity.isFavourite,
+        numberOfLists:
+            await _listRepository.getNumberOfListsInFolder(folderEntity.id),
+      );
+      folderModel.isCheckedToBeDeleted = isFolderChecked(folderModel.id);
+      folderModels.add(folderModel);
+    }
+    return folderModels;
   }
 
   Future<FolderModel> getFolder(id) async {
-    return await _listRepository.getFolder(id);
+    final folderEntity = await _listRepository.getFolder(id);
+    final folderModel = FolderModel(
+      id: folderEntity.id,
+      name: folderEntity.folderName,
+      dateTimeCreated: folderEntity.dateTimeCreated,
+      isFavourite: folderEntity.isFavourite,
+      numberOfLists:
+          await _listRepository.getNumberOfListsInFolder(folderEntity.id),
+    );
+    folderModel.isCheckedToBeDeleted = isFolderChecked(folderModel.id);
+    return folderModel;
   }
 
   Future insertFolder(String name) async {
-    final newFolder = FolderModel(
+    final newFolder = FolderEntity(
       folderName: name,
       dateTimeCreated: DateTime.now(),
+      isFavourite: false
     );
-
     await _listRepository.insertFolder(newFolder);
     notifyListeners();
   }
@@ -32,13 +59,50 @@ class FoldersProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future deleteFolders() async {
+    if (_checkedFolders.length == 0) return;
+    for (var folder in _checkedFolders) {
+      await _listRepository.deleteFolder(folder);
+    }
+    deleteFolderMode = false;
+    _checkedFolders.clear();
+    notifyListeners();
+  }
+
   Future updateFolder(FolderModel folder) async {
-    await _listRepository.updateFolder(folder);
+    await _listRepository.updateFolder(folder.toEntity());
     notifyListeners();
   }
 
   void toggleDeleteFolderMode(bool deleteMode) {
     deleteFolderMode = deleteMode;
+    _checkedFolders.clear();
     notifyListeners();
+  }
+
+  void toggleFolderDeleteCheckbox(int folderId, bool value) {
+    if (_checkedFolders.contains(folderId)) {
+      _checkedFolders.remove(folderId);
+    } else {
+      _checkedFolders.add(folderId);
+    }
+    notifyListeners();
+  }
+
+  bool atleastOneFolderChecked() {
+    return _checkedFolders.length > 0;
+  }
+
+  bool isFolderChecked(int folderId) {
+    return _checkedFolders.contains(folderId);
+  }
+
+  void toggleFoldersIsFavouriteStatus() async {
+    //get folders from repo
+    //compare whether each folders favourite status has been changed
+    //perform an update on those folders
+
+    final folders = await getFolders();
+    final idListOfFavouriteFolders = folders.where((f) => f.isFavourite).map((f) => f.id).toList();
   }
 }

@@ -1,15 +1,14 @@
-import 'package:checklist/models/list_item_model.dart';
+import 'list_item_entity.dart';
 
-class ListModel {
+class ListEntity {
   final int id;
   String name;
   bool completed;
   bool favourite;
   int sortOrderIndex;
   DateTime dateTimeCreated;
-  List<ListItemModel> items;
+  List<ListItemEntity> items;
   int folderId;
 
-  ListModel(this.id);
-
+  ListEntity(this.id);
 }

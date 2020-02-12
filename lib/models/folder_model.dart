@@ -1,14 +1,27 @@
+import 'package:checklist/entities/folder_entity.dart';
+
 class FolderModel {
   int id;
-  String folderName;
+  String name;
   DateTime dateTimeCreated;
   int numberOfLists;
-  //List<ListModel> lists;
+  bool isFavourite;
+  bool isCheckedToBeDeleted = false;
 
   FolderModel({
     this.id,
-    this.folderName,
+    this.name,
     this.dateTimeCreated,
     this.numberOfLists,
+    this.isFavourite,
   });
+
+  FolderEntity toEntity() {
+    return FolderEntity(
+      id: id,
+      folderName: name,
+      dateTimeCreated: dateTimeCreated,
+      isFavourite: isFavourite,
+    );
+  }
 }

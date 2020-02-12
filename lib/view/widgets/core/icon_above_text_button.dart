@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 
 class IconAboveTextButton extends StatelessWidget {
-  final Icon icon;
+  final IconData iconData;
   final String text;
   final Color textColour;
   final double opacity;
+  final Function onTap;
 
   const IconAboveTextButton({
-    this.icon,
+    this.iconData,
     this.text,
     this.opacity,
     this.textColour,
+    this.onTap,
   });
 
   @override
@@ -18,20 +20,23 @@ class IconAboveTextButton extends StatelessWidget {
     return Material(
       color: Theme.of(context).colorScheme.surface,
       child: InkWell(
-        onTap: () {},
+        onTap: onTap,
         child: Opacity(
           opacity: opacity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              icon,
-              Text(
-                text,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: textColour,
-                ),
+              Icon(
+                iconData,
+                color: onTap != null ? Colors.black : Colors.black26,
               ),
+              // Text(
+              //   text,
+              //   textAlign: TextAlign.center,
+              //   style: TextStyle(
+              //     color: textColour,
+              //   ),
+              // ),
             ],
           ),
         ),

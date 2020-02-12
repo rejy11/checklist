@@ -1,8 +1,8 @@
-class ListItemModel {
+class ListItemEntity {
   final int id;
   String name;
   bool completed;
   int listId;
 
-  ListItemModel({this.id});
+  ListItemEntity({this.id});
 }

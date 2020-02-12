@@ -1,22 +1,26 @@
 import 'package:checklist/database/sqlite_database.dart';
-import 'package:checklist/models/folder_model.dart';
+import '../entities/folder_entity.dart';
 
 class ListRepository {
   LocalDatabase database;
 
   ListRepository(this.database);
 
-  Future<List<FolderModel>> getFolders() async {
+  Future<List<FolderEntity>> getFolders() async {
     return await database.folders();
   }
 
-  Future<FolderModel> getFolder(int id) async {
+  Future<FolderEntity> getFolder(int id) async {
     final folders = await database.folders();
     final folder = folders.firstWhere((f) => f.id == id);
     return folder;
   }
 
-  Future insertFolder(FolderModel folder) async {
+  Future<int> getNumberOfListsInFolder(int folderId) async {
+    return await database.getNumberOfListsInFolder(folderId);
+  }
+
+  Future insertFolder(FolderEntity folder) async {
     await database.insertFolder(folder);
   }
 
@@ -24,7 +28,7 @@ class ListRepository {
     await database.deleteFolder(id);
   }
 
-  Future updateFolder(FolderModel folder) async {
+  Future updateFolder(FolderEntity folder) async {
     await database.updateFolder(folder);
   }
 }
