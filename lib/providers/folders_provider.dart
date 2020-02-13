@@ -1,4 +1,6 @@
+import 'package:checklist/enums/folders_order_by.dart';
 import 'package:checklist/models/folder_model.dart';
+import 'package:checklist/repository/user_settings_repository.dart';
 
 import '../entities/folder_entity.dart';
 import 'package:checklist/repository/list_repository.dart';
@@ -6,14 +8,26 @@ import 'package:flutter/foundation.dart';
 
 class FoldersProvider with ChangeNotifier {
   ListRepository _listRepository;
+  UserSettingsRepository _userSettingsRepository;
+
   bool deleteFolderMode = false;
   List<int> _checkedFolders = List<int>();
+  FoldersOrderBy _orderBy;
 
-  FoldersProvider(this._listRepository);
+  FoldersProvider(
+    this._listRepository,
+    this._userSettingsRepository,
+  ) {
+    initialise();
+  }
+
+  void initialise() async {
+    setOrderBy(await _userSettingsRepository.getFoldersSortOrder());
+  }
 
   Future<List<FolderModel>> getFolders() async {
     print('folders_provider - getFolders()');
-    final folderEntities = await _listRepository.getFolders();
+    final folderEntities = await _listRepository.getFolders(orderBy: _orderBy);
     var folderModels = List<FolderModel>();
     for (var folderEntity in folderEntities) {
       var folderModel = FolderModel(
@@ -48,14 +62,9 @@ class FoldersProvider with ChangeNotifier {
     final newFolder = FolderEntity(
       folderName: name,
       dateTimeCreated: DateTime.now(),
-      isFavourite: false
+      isFavourite: false,
     );
     await _listRepository.insertFolder(newFolder);
-    notifyListeners();
-  }
-
-  Future deleteFolder(int id) async {
-    await _listRepository.deleteFolder(id);
     notifyListeners();
   }
 
@@ -97,12 +106,13 @@ class FoldersProvider with ChangeNotifier {
     return _checkedFolders.contains(folderId);
   }
 
-  void toggleFoldersIsFavouriteStatus() async {
-    //get folders from repo
-    //compare whether each folders favourite status has been changed
-    //perform an update on those folders
+  void setOrderBy(FoldersOrderBy orderBy) {
+    _orderBy = orderBy;
+    _userSettingsRepository.setFoldersSortOrder(orderBy);
+    notifyListeners();
+  }
 
-    final folders = await getFolders();
-    final idListOfFavouriteFolders = folders.where((f) => f.isFavourite).map((f) => f.id).toList();
+  FoldersOrderBy get orderBy {
+    return _orderBy;
   }
 }

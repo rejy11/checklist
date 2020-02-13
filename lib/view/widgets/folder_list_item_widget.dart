@@ -58,13 +58,21 @@ class _FolderListItemWidgetState extends State<FolderListItemWidget>
   Widget _buildListItemTrailing() {
     return Opacity(
       opacity: 0.3,
-          child: PopupMenuButton(
+      child: PopupMenuButton(
+        padding: EdgeInsets.all(0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         itemBuilder: (ctx) {
           return [
             PopupMenuItem(
               child: widget.folder.isFavourite
-                  ? Text('Unfavourite')
-                  : Text('Favourite'),
+                  ? Text(
+                      'Unfavourite',
+                      style: TextStyle(fontSize: 14),
+                    )
+                  : Text(
+                      'Favourite',
+                      style: TextStyle(fontSize: 14),
+                    ),
               value: 1,
             )
           ];

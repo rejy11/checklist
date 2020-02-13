@@ -56,7 +56,9 @@ class FolderListTile extends StatelessWidget {
                     );
                   } else {
                     return Icon(
-                      MaterialCommunityIcons.folder_outline,
+                      folder.isFavourite
+                          ? MaterialCommunityIcons.folder_star_outline
+                          : MaterialCommunityIcons.folder_outline,
                       color: Theme.of(context).accentColor,
                     );
                   }
@@ -72,7 +74,7 @@ class FolderListTile extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 5, top: 10),
                   child: Text(
                     folder.name,
-                    style: TextStyle(fontSize: 14),
+                    style: TextStyle(fontSize: 16),
                     textAlign: TextAlign.left,
                   ),
                 ),

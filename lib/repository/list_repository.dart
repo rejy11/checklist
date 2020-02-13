@@ -1,4 +1,5 @@
 import 'package:checklist/database/sqlite_database.dart';
+import 'package:checklist/enums/folders_order_by.dart';
 import '../entities/folder_entity.dart';
 
 class ListRepository {
@@ -6,8 +7,8 @@ class ListRepository {
 
   ListRepository(this.database);
 
-  Future<List<FolderEntity>> getFolders() async {
-    return await database.folders();
+  Future<List<FolderEntity>> getFolders({FoldersOrderBy orderBy}) async {
+    return await database.folders(orderBy: orderBy);
   }
 
   Future<FolderEntity> getFolder(int id) async {

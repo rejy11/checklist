@@ -26,7 +26,6 @@ class App extends StatelessWidget {
     secondary: Colors.amber[500],
     surface: Colors.grey[100],
     onSurface: Colors.black,
-    
   );
 
   @override
@@ -49,7 +48,10 @@ class App extends StatelessWidget {
       ),
       providers: [
         ChangeNotifierProvider<FoldersProvider>(
-          create: (ctx) => FoldersProvider(serviceLocator()),
+          create: (ctx) => FoldersProvider(
+            serviceLocator(),
+            serviceLocator(),
+          ),
         )
       ],
     );

@@ -1,3 +1,4 @@
+import 'package:checklist/enums/folders_order_by.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -56,14 +57,31 @@ class LocalDatabase {
     );
   }
 
-  Future<List<FolderEntity>> folders() async {
+  Future<List<FolderEntity>> folders({FoldersOrderBy orderBy}) async {
     final db = await database;
-    final folderMaps = await db.query('Folder');
+
+    var orderByString = '';
+
+    switch (orderBy) {
+      case FoldersOrderBy.Newest:
+        orderByString = 'dateTimeCreated desc';
+        break;
+      case FoldersOrderBy.Oldest:
+        orderByString = 'dateTimeCreated';
+        break;
+      case FoldersOrderBy.Favourite:
+        orderByString = 'favourite desc';
+        break;
+      default:
+        orderByString = 'datetime(dateTimeCreated) desc';
+    }
+    final folderMaps = await db.query('Folder', orderBy: orderByString);
+
     final folders = List<FolderEntity>();
 
     for (var folderMap in folderMaps) {
       final folderId = folderMap['id'];
-      
+
       folders.add(FolderEntity(
         id: folderId,
         folderName: folderMap['name'],
