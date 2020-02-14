@@ -44,7 +44,7 @@ class _FoldersScreenState extends State<FoldersScreen>
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         elevation: 0,
-        centerTitle: true,
+        centerTitle: false,titleSpacing: 30,
         title: Text(
           'Your Folders',
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -85,6 +85,10 @@ class _FoldersScreenState extends State<FoldersScreen>
               icon: Icon(MaterialCommunityIcons.sort),
             );
           }),
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () => _newFolderDialog(context),
+          ),
         ],
       ),
       body: Column(
@@ -97,23 +101,23 @@ class _FoldersScreenState extends State<FoldersScreen>
           ),
         ],
       ),
-      floatingActionButton: Consumer<FoldersProvider>(
-        builder: (BuildContext context, FoldersProvider value, Widget child) {
-          if (!value.deleteFolderMode) {
-            _hideFabAnimation.forward();
-          } else {
-            _hideFabAnimation.reverse();
-          }
-          return ScaleTransition(
-            scale: _scaleAnimation,
-            child: FloatingActionButton(
-              onPressed: () => _newFolderDialog(context),
-              child: Icon(Icons.add),
-              elevation: 1,
-            ),
-          );
-        },
-      ),
+      // floatingActionButton: Consumer<FoldersProvider>(
+      //   builder: (BuildContext context, FoldersProvider value, Widget child) {
+      //     if (!value.deleteFolderMode) {
+      //       _hideFabAnimation.forward();
+      //     } else {
+      //       _hideFabAnimation.reverse();
+      //     }
+      //     return ScaleTransition(
+      //       scale: _scaleAnimation,
+      //       child: FloatingActionButton(
+      //         onPressed: () => _newFolderDialog(context),
+      //         child: Icon(Icons.add),
+      //         elevation: 1,
+      //       ),
+      //     );
+      //   },
+      // ),
     );
   }
 }
