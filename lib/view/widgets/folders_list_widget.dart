@@ -31,7 +31,7 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
     return WillPopScope(
       onWillPop: () {
         return Future.delayed(Duration(milliseconds: 0), () {
-          return _onBackPressed();
+          return _onBackPressed(); //way to wrap a synchronous method in async call
         });
       },
       child: Stack(
@@ -129,12 +129,9 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
                       disabledColor: Colors.white30,
                     ),
                     IconButton(
-                      icon: Icon(
-                          MaterialCommunityIcons.chevron_up),
+                      icon: Icon(MaterialCommunityIcons.chevron_up),
                       color: Colors.white,
                       onPressed: () {
-                        Provider.of<FoldersProvider>(context, listen: false)
-                            .toggleDeleteFolderMode(false);
                         _hidePanel();
                       },
                     ),
@@ -154,6 +151,8 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
       _listViewPadding = 0;
       _panelVisible = false;
     });
+    Provider.of<FoldersProvider>(context, listen: false)
+        .toggleDeleteFolderMode(false);
     Provider.of<FoldersProvider>(context, listen: false)
         .toggleAllFoldersDeleteCheckbox(false);
   }
@@ -185,6 +184,7 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
               FlatButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  _hidePanel();
                 },
                 child: Text(
                   'CANCEL',
