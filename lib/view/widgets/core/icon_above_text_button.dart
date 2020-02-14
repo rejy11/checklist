@@ -6,6 +6,7 @@ class IconAboveTextButton extends StatelessWidget {
   final Color textColour;
   final double opacity;
   final Function onTap;
+  final bool showText;
 
   const IconAboveTextButton({
     this.iconData,
@@ -13,12 +14,14 @@ class IconAboveTextButton extends StatelessWidget {
     this.opacity,
     this.textColour,
     this.onTap,
+    this.showText,
   });
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme.of(context).colorScheme.surface,
+      color: Theme.of(context).colorScheme.primary,
+      elevation: 0,
       child: InkWell(
         onTap: onTap,
         child: Opacity(
@@ -28,15 +31,16 @@ class IconAboveTextButton extends StatelessWidget {
             children: <Widget>[
               Icon(
                 iconData,
-                color: onTap != null ? Colors.black : Colors.black26,
+                color: onTap != null ? textColour : Colors.white30,
               ),
-              // Text(
-              //   text,
-              //   textAlign: TextAlign.center,
-              //   style: TextStyle(
-              //     color: textColour,
-              //   ),
-              // ),
+              if (showText)
+                Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: textColour,
+                  ),
+                ),
             ],
           ),
         ),

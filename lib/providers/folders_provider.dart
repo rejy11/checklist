@@ -1,6 +1,7 @@
 import 'package:checklist/enums/folders_order_by.dart';
 import 'package:checklist/models/folder_model.dart';
 import 'package:checklist/repository/user_settings_repository.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../entities/folder_entity.dart';
 import 'package:checklist/repository/list_repository.dart';
@@ -10,7 +11,10 @@ class FoldersProvider with ChangeNotifier {
   ListRepository _listRepository;
   UserSettingsRepository _userSettingsRepository;
 
+  List<FolderModel> _folders;
+
   bool deleteFolderMode = false;
+  bool _allFoldersCheckedCheckBox = false;
   List<int> _checkedFolders = List<int>();
   FoldersOrderBy _orderBy;
 
@@ -25,7 +29,11 @@ class FoldersProvider with ChangeNotifier {
     setOrderBy(await _userSettingsRepository.getFoldersSortOrder());
   }
 
-  Future<List<FolderModel>> getFolders() async {
+  Future<List<FolderModel>> get folders async {
+    return _folders;
+  }
+
+  Future fetchFolders() async {
     print('folders_provider - getFolders()');
     final folderEntities = await _listRepository.getFolders(orderBy: _orderBy);
     var folderModels = List<FolderModel>();
@@ -41,22 +49,23 @@ class FoldersProvider with ChangeNotifier {
       folderModel.isCheckedToBeDeleted = isFolderChecked(folderModel.id);
       folderModels.add(folderModel);
     }
-    return folderModels;
+    _folders = folderModels;
+    notifyListeners();
   }
 
-  Future<FolderModel> getFolder(id) async {
-    final folderEntity = await _listRepository.getFolder(id);
-    final folderModel = FolderModel(
-      id: folderEntity.id,
-      name: folderEntity.folderName,
-      dateTimeCreated: folderEntity.dateTimeCreated,
-      isFavourite: folderEntity.isFavourite,
-      numberOfLists:
-          await _listRepository.getNumberOfListsInFolder(folderEntity.id),
-    );
-    folderModel.isCheckedToBeDeleted = isFolderChecked(folderModel.id);
-    return folderModel;
-  }
+  // Future<FolderModel> getFolder(id) async {
+  //   final folderEntity = await _listRepository.getFolder(id);
+  //   final folderModel = FolderModel(
+  //     id: folderEntity.id,
+  //     name: folderEntity.folderName,
+  //     dateTimeCreated: folderEntity.dateTimeCreated,
+  //     isFavourite: folderEntity.isFavourite,
+  //     numberOfLists:
+  //         await _listRepository.getNumberOfListsInFolder(folderEntity.id),
+  //   );
+  //   folderModel.isCheckedToBeDeleted = isFolderChecked(folderModel.id);
+  //   return folderModel;
+  // }
 
   Future insertFolder(String name) async {
     final newFolder = FolderEntity(
@@ -65,7 +74,7 @@ class FoldersProvider with ChangeNotifier {
       isFavourite: false,
     );
     await _listRepository.insertFolder(newFolder);
-    notifyListeners();
+    await fetchFolders();
   }
 
   Future deleteFolders() async {
@@ -75,12 +84,12 @@ class FoldersProvider with ChangeNotifier {
     }
     deleteFolderMode = false;
     _checkedFolders.clear();
-    notifyListeners();
+    await fetchFolders();
   }
 
   Future updateFolder(FolderModel folder) async {
     await _listRepository.updateFolder(folder.toEntity());
-    notifyListeners();
+    await fetchFolders();
   }
 
   void toggleDeleteFolderMode(bool deleteMode) {
@@ -92,8 +101,25 @@ class FoldersProvider with ChangeNotifier {
   void toggleFolderDeleteCheckbox(int folderId, bool value) {
     if (_checkedFolders.contains(folderId)) {
       _checkedFolders.remove(folderId);
+      _allFoldersCheckedCheckBox = false;
     } else {
       _checkedFolders.add(folderId);
+    }
+    notifyListeners();
+  }
+
+  void toggleAllFoldersDeleteCheckbox(bool value) async {
+    if(!value) {
+      _checkedFolders.clear();
+      _allFoldersCheckedCheckBox = false;
+    } else {
+      _allFoldersCheckedCheckBox = true;
+      if(_checkedFolders.isNotEmpty) {
+        _checkedFolders.clear();
+      }
+      for (var folder in _folders) {
+        _checkedFolders.add(folder.id);
+      }
     }
     notifyListeners();
   }
@@ -106,13 +132,17 @@ class FoldersProvider with ChangeNotifier {
     return _checkedFolders.contains(folderId);
   }
 
-  void setOrderBy(FoldersOrderBy orderBy) {
+  void setOrderBy(FoldersOrderBy orderBy) async {
     _orderBy = orderBy;
-    _userSettingsRepository.setFoldersSortOrder(orderBy);
-    notifyListeners();
+    await _userSettingsRepository.setFoldersSortOrder(orderBy);
+    await fetchFolders();
   }
 
   FoldersOrderBy get orderBy {
     return _orderBy;
+  }
+
+  bool get allFoldersChecked {
+    return _allFoldersCheckedCheckBox;
   }
 }

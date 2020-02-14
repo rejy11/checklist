@@ -64,9 +64,10 @@ class _NewFolderDialogWidgetState extends State<NewFolderDialogWidget> {
     );
   }
 
-  _insertFolder() {
-    Provider.of<FoldersProvider>(context, listen: false)
-        .insertFolder(nameController.text);
+  _insertFolder() async {
     Navigator.pop(context);
+
+    await Provider.of<FoldersProvider>(context, listen: false)
+        .insertFolder(nameController.text);
   }
 }

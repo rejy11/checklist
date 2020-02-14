@@ -80,7 +80,7 @@ class _FolderListItemWidgetState extends State<FolderListItemWidget>
         onSelected: (value) async {
           if (value == 1) {
             widget.folder.isFavourite = !widget.folder.isFavourite;
-            Provider.of<FoldersProvider>(context, listen: false)
+            await Provider.of<FoldersProvider>(context, listen: false)
                 .updateFolder(widget.folder);
             await _slideController.forward();
             await _slideController.reverse();

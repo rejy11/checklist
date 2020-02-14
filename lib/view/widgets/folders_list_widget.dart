@@ -1,3 +1,4 @@
+import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
@@ -5,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../../models/folder_model.dart';
 import '../../providers/folders_provider.dart';
 import '../widgets/folder_list_item_widget.dart';
-import 'core/icon_above_text_button.dart';
 
 class FoldersListWidget extends StatefulWidget {
   @override
@@ -14,57 +14,62 @@ class FoldersListWidget extends StatefulWidget {
 
 class _FoldersListWidgetState extends State<FoldersListWidget>
     with SingleTickerProviderStateMixin {
-  double _bottomPanelHeight = 50;
-  double _bottomPanelPosition;
-  double _listViewBottomPadding = 0;
-  Duration _bottomPanelSlideDuration = Duration(milliseconds: 150);
+  bool _panelVisible = false;
+  double _actionPanelHeight = 50;
+  double _actionPanelPosition;
+  double _listViewPadding = 0;
+  Duration _actionPanelSlideDuration = Duration(milliseconds: 150);
 
   @override
   void initState() {
-    _bottomPanelPosition = _bottomPanelHeight * -1;
+    _actionPanelPosition = _actionPanelHeight * -1;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        FutureBuilder<List<FolderModel>>(
-          future: Provider.of<FoldersProvider>(context).getFolders(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(),
+    return WillPopScope(
+      onWillPop: () {
+        return Future.delayed(Duration(milliseconds: 0), () {
+          return _onBackPressed();
+        });
+      },
+      child: Stack(
+        children: [
+          _buildBottomActionPanel(),
+          FutureBuilder<List<FolderModel>>(
+            future: Provider.of<FoldersProvider>(context).folders,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              return AnimatedContainer(
+                duration: _actionPanelSlideDuration,
+                padding: EdgeInsets.only(top: _listViewPadding),
+                child: ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, i) {
+                    final folder = snapshot.data[i];
+                    return FolderListItemWidget(
+                      folder: folder,
+                      onLongPress: onListItemLongPress,
+                    );
+                  },
+                ),
               );
-            }
-            return AnimatedContainer(
-              duration: _bottomPanelSlideDuration,
-              padding: EdgeInsets.only(bottom: _listViewBottomPadding),
-              child: ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, i) {
-                  final folder = snapshot.data[i];
-                  return FolderListItemWidget(
-                    folder: folder,
-                    onLongPress: onListItemLongPress,
-                  );
-                },
-              ),
-            );
-          },
-        ),
-        _buildBottomActionPanel(),
-      ],
+            },
+          ),
+        ],
+      ),
     );
   }
 
   void onListItemLongPress() {
     Provider.of<FoldersProvider>(context, listen: false)
         .toggleDeleteFolderMode(true); // removes fab from screen
-    setState(() {
-      _bottomPanelPosition = 0;
-      _listViewBottomPadding = _bottomPanelHeight;
-    });
+    _showPanel();
   }
 
   Widget _buildBottomActionPanel() {
@@ -72,55 +77,68 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
         Provider.of<FoldersProvider>(context, listen: false)
             .atleastOneFolderChecked();
     return AnimatedPositioned(
-      bottom: _bottomPanelPosition,
-      duration: _bottomPanelSlideDuration,
+      top: _actionPanelPosition,
+      duration: _actionPanelSlideDuration,
       child: ClipRRect(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
+          bottomLeft: Radius.circular(25),
+          bottomRight: Radius.circular(25),
         ),
         child: Container(
-          height: _bottomPanelHeight,
+          height: _actionPanelHeight,
           width: MediaQuery.of(context).size.width,
-          color: Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).colorScheme.primary,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Expanded(
-                child: IconAboveTextButton(
-                    iconData: MaterialCommunityIcons.arrow_collapse_down,
-                    text: 'Cancel',
-                    textColour: Colors.black,
-                    opacity: 0.65,
-                    onTap: () {
-                      Provider.of<FoldersProvider>(context, listen: false)
-                          .toggleDeleteFolderMode(false);
-                      setState(() {
-                        _bottomPanelPosition = _bottomPanelHeight * -1;
-                        _listViewBottomPadding = 0;
-                      });
-                    }),
-              ),
-              VerticalDivider(
-                color: Colors.black26,
-              ),
-              Expanded(
-                child: IconAboveTextButton(
-                  iconData: MaterialCommunityIcons.star_outline,
-                  opacity: 0.65,
-                  onTap: null,
+                flex: 10,
+                child: Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(left: 17),
+                      child: Container(
+                        width: 80,
+                        child: Consumer<FoldersProvider>(
+                          builder: (context, provider, child) {
+                            return CircularCheckBox(
+                              value: provider.allFoldersChecked,
+                              onChanged: (value) {
+                                provider.toggleAllFoldersDeleteCheckbox(value);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    Text(
+                      'All',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    )
+                  ],
                 ),
               ),
-              VerticalDivider(
-                color: Colors.black26,
-              ),
-              Expanded(
-                child: IconAboveTextButton(
-                  iconData: MaterialCommunityIcons.delete_outline,
-                  text: 'Delete',
-                  textColour: Colors.black,
-                  opacity: 0.65,
-                  onTap: atleastOneFolderChecked ? _deleteFolder : null,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 5),
+                child: Row(
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(MaterialCommunityIcons.delete_outline),
+                      onPressed: atleastOneFolderChecked ? _deleteFolder : null,
+                      color: Colors.white,
+                      disabledColor: Colors.white30,
+                    ),
+                    IconButton(
+                      icon: Icon(
+                          MaterialCommunityIcons.chevron_up),
+                      color: Colors.white,
+                      onPressed: () {
+                        Provider.of<FoldersProvider>(context, listen: false)
+                            .toggleDeleteFolderMode(false);
+                        _hidePanel();
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -130,11 +148,72 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
     );
   }
 
-  void _deleteFolder() {
-    Provider.of<FoldersProvider>(context, listen: false).deleteFolders();
+  void _hidePanel() {
     setState(() {
-      _bottomPanelPosition = _bottomPanelHeight * -1;
-      _listViewBottomPadding = 0;
+      _actionPanelPosition = _actionPanelHeight * -1;
+      _listViewPadding = 0;
+      _panelVisible = false;
     });
+    Provider.of<FoldersProvider>(context, listen: false)
+        .toggleAllFoldersDeleteCheckbox(false);
+  }
+
+  void _showPanel() {
+    setState(() {
+      _actionPanelPosition = 0;
+      _listViewPadding = _actionPanelHeight;
+      _panelVisible = true;
+    });
+  }
+
+  void _deleteFolder() {
+    showDialog(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            title: Text(
+              'Delete Folder',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            content: Text(
+              'Are you sure you want to delete the selected folders?',
+              style: TextStyle(height: 2),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'CANCEL',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Future.delayed(const Duration(milliseconds: 100), () async {
+                    await Provider.of<FoldersProvider>(context, listen: false)
+                        .deleteFolders();
+                    _hidePanel();
+                  });
+                },
+                child: Text('DELETE',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+              )
+            ],
+          );
+        });
+  }
+
+  bool _onBackPressed() {
+    if (_panelVisible) {
+      _hidePanel();
+      return false;
+    } else {
+      return true;
+    }
   }
 }

@@ -15,7 +15,7 @@ class FoldersScreen extends StatefulWidget {
 class _FoldersScreenState extends State<FoldersScreen>
     with TickerProviderStateMixin<FoldersScreen> {
   AnimationController _hideFabAnimation;
-  Animation<double> _scaleAnimation;
+  Animation<double> _scaleAnimation;  
 
   @override
   void initState() {
@@ -43,6 +43,7 @@ class _FoldersScreenState extends State<FoldersScreen>
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
+        elevation: 0,
         centerTitle: true,
         title: Text(
           'Your Folders',
@@ -90,7 +91,7 @@ class _FoldersScreenState extends State<FoldersScreen>
         children: <Widget>[
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(top: 5),
+              padding: const EdgeInsets.only(top: 0),
               child: FoldersListWidget(),
             ),
           ),
