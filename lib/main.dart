@@ -43,6 +43,7 @@ class App extends StatelessWidget {
           errorColor: Colors.red[600],
           fontFamily: 'Comfortaa',
           primaryColorLight: Color.fromARGB(255, 117, 125, 232),
+          disabledColor: Colors.white30,
         ),
         home: FoldersScreen(),
       ),

@@ -1,11 +1,10 @@
-import 'package:checklist/enums/folders_order_by.dart';
-import 'package:checklist/providers/folders_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../enums/folders_order_by.dart';
+import '../../providers/folders_provider.dart';
+import '../widgets/core/text_field_submit_dialog.dart';
 import '../widgets/folders_list_widget.dart';
-import '../widgets/new_folder_dialog_widget.dart';
 
 class FoldersScreen extends StatefulWidget {
   @override
@@ -14,119 +13,179 @@ class FoldersScreen extends StatefulWidget {
 
 class _FoldersScreenState extends State<FoldersScreen>
     with TickerProviderStateMixin<FoldersScreen> {
-  AnimationController _hideFabAnimation;
-  Animation<double> _scaleAnimation;  
-
-  @override
-  void initState() {
-    _hideFabAnimation = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 150),
-      value: 1,
-    );
-    _scaleAnimation = CurvedAnimation(
-      parent: _hideFabAnimation,
-      curve: Curves.easeIn,
-    );
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _hideFabAnimation.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         elevation: 0,
-        centerTitle: false,titleSpacing: 30,
+        centerTitle: false,
+        titleSpacing: 30,
         title: Text(
           'Your Folders',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: <Widget>[
-          Consumer<FoldersProvider>(builder: (context, value, child) {
-            final orderBy = value.orderBy;
-            const textStyle = TextStyle(fontSize: 14);
-            return PopupMenuButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5)                
-              ),
-              itemBuilder: (ctx) {
-                return [
-                  CheckedPopupMenuItem(
-                    child: Text('Newest', style: textStyle,),
-                    checked: orderBy == FoldersOrderBy.Newest,
-                    value: FoldersOrderBy.Newest,
-                  ),
-                  CheckedPopupMenuItem(
-                    child: Text('Oldest', style: textStyle,),
-                    checked: orderBy == FoldersOrderBy.Oldest,
-                    value: FoldersOrderBy.Oldest,
-                  ),
-                  CheckedPopupMenuItem(
-                    child: Text('Favourite', style: textStyle,),
-                    checked: orderBy == FoldersOrderBy.Favourite,
-                    value: FoldersOrderBy.Favourite,
-                  ),
-                ];
-              },
-              onSelected: (value) {
-                if (value is FoldersOrderBy) {
-                  Provider.of<FoldersProvider>(context, listen: false)
-                      .setOrderBy(value);
-                }
-              },
-              icon: Icon(MaterialCommunityIcons.sort),
-            );
-          }),
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => _newFolderDialog(context),
+          Consumer<FoldersProvider>(
+            builder: (context, value, child) {
+              final deleteFolderMode = value.deleteFolderMode;
+              return PopupMenuButton(
+                enabled: !deleteFolderMode,
+                onSelected: (value) {
+                  if (value == 'SortOrder') {
+                    _showSortOrderBottomSheet(context);
+                  }
+                },
+                itemBuilder: (ctx) {
+                  return [
+                    PopupMenuItem(
+                      child: Text('Sort Order'),
+                      value: 'SortOrder',
+                    ),
+                  ];
+                },
+              );
+            },
+          ),
+          Consumer<FoldersProvider>(
+            builder: (context, value, child) {
+              final deleteFolderMode = value.deleteFolderMode;
+              return deleteFolderMode
+                  ? IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: null,
+                      disabledColor: Theme.of(context).disabledColor,
+                    )
+                  : IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () => _newFolderDialog(context),
+                    );
+            },
           ),
         ],
       ),
       body: Column(
         children: <Widget>[
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 0),
-              child: FoldersListWidget(),
-            ),
+            child: FoldersListWidget(),
           ),
         ],
       ),
-      // floatingActionButton: Consumer<FoldersProvider>(
-      //   builder: (BuildContext context, FoldersProvider value, Widget child) {
-      //     if (!value.deleteFolderMode) {
-      //       _hideFabAnimation.forward();
-      //     } else {
-      //       _hideFabAnimation.reverse();
-      //     }
-      //     return ScaleTransition(
-      //       scale: _scaleAnimation,
-      //       child: FloatingActionButton(
-      //         onPressed: () => _newFolderDialog(context),
-      //         child: Icon(Icons.add),
-      //         elevation: 1,
-      //       ),
-      //     );
-      //   },
-      // ),
     );
   }
-}
 
-_newFolderDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (ctx) {
-      return NewFolderDialogWidget();
-    },
-  );
+  _showSortOrderBottomSheet(BuildContext context) {
+    final radioButtonTextStyle = TextStyle(fontSize: 16);
+    // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    //   systemNavigationBarIconBrightness: Brightness.dark,
+    //   systemNavigationBarColor: Colors.black45,
+    // ));
+
+    showModalBottomSheet(
+      backgroundColor: Theme.of(context).backgroundColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+      ),
+      context: context,
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+              child: Padding(
+                padding: const EdgeInsets.all(30),
+                child: Consumer<FoldersProvider>(
+                  builder: (context, value, child) {
+                    final orderBy = value.orderBy;
+                    return Column(
+                      children: <Widget>[
+                        child,
+                        Row(
+                          children: <Widget>[
+                            Radio(
+                              value: FoldersOrderBy.Newest,
+                              groupValue: orderBy,
+                              onChanged: (value) {
+                                Provider.of<FoldersProvider>(context,
+                                        listen: false)
+                                    .setOrderBy(FoldersOrderBy.Newest);
+                              },
+                            ),
+                            Center(
+                              child:
+                                  Text('Newest', style: radioButtonTextStyle),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Radio(
+                              value: FoldersOrderBy.Oldest,
+                              groupValue: orderBy,
+                              onChanged: (value) {
+                                Provider.of<FoldersProvider>(context,
+                                        listen: false)
+                                    .setOrderBy(FoldersOrderBy.Oldest);
+                              },
+                            ),
+                            Text('Oldest', style: radioButtonTextStyle),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Radio(
+                              value: FoldersOrderBy.Favourite,
+                              groupValue: orderBy,
+                              onChanged: (value) {
+                                Provider.of<FoldersProvider>(context,
+                                        listen: false)
+                                    .setOrderBy(FoldersOrderBy.Favourite);
+                              },
+                            ),
+                            Text('Favourite', style: radioButtonTextStyle),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10, bottom: 15),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Sort By',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    //SystemChrome.restoreSystemUIOverlays();
+  }
+
+  _newFolderDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return TextFieldAndSubmitDialog(
+          _insertFolder,
+          'Folder Name',
+        );
+      },
+    );
+  }
+
+  _insertFolder(String text) async {
+    await Provider.of<FoldersProvider>(context, listen: false)
+        .insertFolder(text);
+  }
 }

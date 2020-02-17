@@ -1,7 +1,8 @@
-import 'package:checklist/database/sqlite_database.dart';
-import 'package:checklist/repository/list_repository.dart';
-import 'package:checklist/repository/user_settings_repository.dart';
 import 'package:get_it/get_it.dart';
+
+import '../database/sqlite_database.dart';
+import '../repository/list_repository.dart';
+import '../repository/user_settings_repository.dart';
 
 final serviceLocator = GetIt.instance;
 

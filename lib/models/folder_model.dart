@@ -1,4 +1,4 @@
-import 'package:checklist/entities/folder_entity.dart';
+import '../entities/folder_entity.dart';
 
 class FolderModel {
   int id;

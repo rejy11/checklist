@@ -119,7 +119,7 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5),
+                padding: EdgeInsets.symmetric(horizontal: 0),
                 child: Row(
                   children: <Widget>[
                     IconButton(

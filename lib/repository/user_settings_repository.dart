@@ -1,5 +1,6 @@
-import 'package:checklist/enums/folders_order_by.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../enums/folders_order_by.dart';
 
 class UserSettingsRepository {
   Future<SharedPreferences> userPrefs() async {

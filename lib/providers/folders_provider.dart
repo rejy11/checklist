@@ -1,11 +1,11 @@
-import 'package:checklist/enums/folders_order_by.dart';
-import 'package:checklist/models/folder_model.dart';
-import 'package:checklist/repository/user_settings_repository.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 import '../entities/folder_entity.dart';
-import 'package:checklist/repository/list_repository.dart';
-import 'package:flutter/foundation.dart';
+import '../enums/folders_order_by.dart';
+import '../models/folder_model.dart';
+import '../repository/list_repository.dart';
+import '../repository/user_settings_repository.dart';
 
 class FoldersProvider with ChangeNotifier {
   ListRepository _listRepository;

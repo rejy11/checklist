@@ -1,6 +1,6 @@
-import 'package:checklist/database/sqlite_database.dart';
-import 'package:checklist/enums/folders_order_by.dart';
+import '../database/sqlite_database.dart';
 import '../entities/folder_entity.dart';
+import '../enums/folders_order_by.dart';
 
 class ListRepository {
   LocalDatabase database;

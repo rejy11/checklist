@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/folder_model.dart';
 import '../../providers/folders_provider.dart';
+import 'core/text_field_submit_dialog.dart';
 import 'folder_list_tile.dart';
 
 class FolderListItemWidget extends StatefulWidget {
@@ -74,7 +75,14 @@ class _FolderListItemWidgetState extends State<FolderListItemWidget>
                       style: TextStyle(fontSize: 14),
                     ),
               value: 1,
-            )
+            ),
+            PopupMenuItem(
+              child: Text(
+                'Change Name',
+                style: TextStyle(fontSize: 14),
+              ),
+              value: 2,
+            ),
           ];
         },
         onSelected: (value) async {
@@ -84,9 +92,26 @@ class _FolderListItemWidgetState extends State<FolderListItemWidget>
                 .updateFolder(widget.folder);
             await _slideController.forward();
             await _slideController.reverse();
+          } else if (value == 2) {
+            showDialog(
+              context: context,
+              builder: (ctx) {
+                return TextFieldAndSubmitDialog(
+                  _updateFolder,
+                  'Folder Name',
+                  text: widget.folder.name,
+                );
+              },
+            );
           }
         },
       ),
     );
+  }
+
+  _updateFolder(String text) async {
+    widget.folder.name = text;
+    await Provider.of<FoldersProvider>(context, listen: false)
+        .updateFolder(widget.folder);
   }
 }
