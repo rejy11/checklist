@@ -1,14 +1,21 @@
-import 'list_item_entity.dart';
-
 class ListEntity {
   final int id;
-  String name;
-  bool completed;
-  bool favourite;
-  int sortOrderIndex;
-  DateTime dateTimeCreated;
-  List<ListItemEntity> items;
-  int folderId;
+  final String name;
+  final bool completed;
+  final bool favourite;
+  //final int sortOrderIndex;
+  final DateTime dateTimeCreated;
+  //final List<ListItemEntity> items;
+  final int folderId;
 
-  ListEntity(this.id);
+  ListEntity({
+    this.id,
+    this.name,
+    this.completed,
+    this.favourite,
+    //this.sortOrderIndex,
+    this.dateTimeCreated,
+    //this.items,
+    this.folderId,
+  });
 }

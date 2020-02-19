@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../enums/folders_order_by.dart';
 import '../../providers/folders_provider.dart';
 import '../widgets/core/text_field_submit_dialog.dart';
-import '../widgets/folders_list_widget.dart';
+import '../widgets/folder/folders_list_widget.dart';
 
 class FoldersScreen extends StatefulWidget {
   @override
@@ -21,9 +22,18 @@ class _FoldersScreenState extends State<FoldersScreen>
         elevation: 0,
         centerTitle: false,
         titleSpacing: 30,
-        title: Text(
-          'Your Folders',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Row(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(right: 8),
+              child: Icon(MaterialCommunityIcons.folder_outline),
+            ),
+            Text(
+              'Your Folders',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            
+          ],
         ),
         actions: <Widget>[
           Consumer<FoldersProvider>(
@@ -179,6 +189,7 @@ class _FoldersScreenState extends State<FoldersScreen>
         return TextFieldAndSubmitDialog(
           _insertFolder,
           'Folder Name',
+          maxLength: 15,
         );
       },
     );

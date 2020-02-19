@@ -1,14 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
 import '../entities/folder_entity.dart';
 import '../enums/folders_order_by.dart';
 import '../models/folder_model.dart';
-import '../repository/list_repository.dart';
+import '../repository/folders_repository.dart';
 import '../repository/user_settings_repository.dart';
 
 class FoldersProvider with ChangeNotifier {
-  ListRepository _listRepository;
+  FoldersRepository _foldersRepository;
   UserSettingsRepository _userSettingsRepository;
 
   List<FolderModel> _folders;
@@ -19,7 +18,7 @@ class FoldersProvider with ChangeNotifier {
   FoldersOrderBy _orderBy;
 
   FoldersProvider(
-    this._listRepository,
+    this._foldersRepository,
     this._userSettingsRepository,
   ) {
     initialise();
@@ -35,7 +34,7 @@ class FoldersProvider with ChangeNotifier {
 
   Future fetchFolders() async {
     print('folders_provider - getFolders()');
-    final folderEntities = await _listRepository.getFolders(orderBy: _orderBy);
+    final folderEntities = await _foldersRepository.getFolders(orderBy: _orderBy);
     var folderModels = List<FolderModel>();
     for (var folderEntity in folderEntities) {
       var folderModel = FolderModel(
@@ -44,7 +43,7 @@ class FoldersProvider with ChangeNotifier {
         dateTimeCreated: folderEntity.dateTimeCreated,
         isFavourite: folderEntity.isFavourite,
         numberOfLists:
-            await _listRepository.getNumberOfListsInFolder(folderEntity.id),
+            await _foldersRepository.getNumberOfListsInFolder(folderEntity.id),
       );
       folderModel.isCheckedToBeDeleted = isFolderChecked(folderModel.id);
       folderModels.add(folderModel);
@@ -73,14 +72,14 @@ class FoldersProvider with ChangeNotifier {
       dateTimeCreated: DateTime.now(),
       isFavourite: false,
     );
-    await _listRepository.insertFolder(newFolder);
+    await _foldersRepository.insertFolder(newFolder);
     await fetchFolders();
   }
 
   Future deleteFolders() async {
     if (_checkedFolders.length == 0) return;
     for (var folder in _checkedFolders) {
-      await _listRepository.deleteFolder(folder);
+      await _foldersRepository.deleteFolder(folder);
     }
     deleteFolderMode = false;
     _checkedFolders.clear();
@@ -88,7 +87,7 @@ class FoldersProvider with ChangeNotifier {
   }
 
   Future updateFolder(FolderModel folder) async {
-    await _listRepository.updateFolder(folder.toEntity());
+    await _foldersRepository.updateFolder(folder.toEntity());
     await fetchFolders();
   }
 
@@ -109,12 +108,12 @@ class FoldersProvider with ChangeNotifier {
   }
 
   void toggleAllFoldersDeleteCheckbox(bool value) async {
-    if(!value) {
+    if (!value) {
       _checkedFolders.clear();
       _allFoldersCheckedCheckBox = false;
     } else {
       _allFoldersCheckedCheckBox = true;
-      if(_checkedFolders.isNotEmpty) {
+      if (_checkedFolders.isNotEmpty) {
         _checkedFolders.clear();
       }
       for (var folder in _folders) {

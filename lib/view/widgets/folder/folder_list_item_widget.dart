@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/folder_model.dart';
-import '../../providers/folders_provider.dart';
-import 'core/text_field_submit_dialog.dart';
+import '../../../models/folder_model.dart';
+import '../../../providers/folders_provider.dart';
+import '../core/text_field_submit_dialog.dart';
 import 'folder_list_tile.dart';
 
 class FolderListItemWidget extends StatefulWidget {
   final FolderModel folder;
   final Function onLongPress;
+  final Function onTap;
 
   const FolderListItemWidget({
     this.folder,
     this.onLongPress,
+    this.onTap,
   });
 
   @override
@@ -49,8 +51,13 @@ class _FolderListItemWidgetState extends State<FolderListItemWidget>
         elevation: 1,
         child: FolderListTile(
           folder: widget.folder,
-          onLongPress: widget.onLongPress,
+          onLongPress: () {
+            widget.onLongPress();
+            Provider.of<FoldersProvider>(context, listen: false)
+                .toggleFolderDeleteCheckbox(widget.folder.id, true);
+          },
           trailing: _buildListItemTrailing(),
+          onTap: widget.onTap,
         ),
       ),
     );
@@ -60,6 +67,7 @@ class _FolderListItemWidgetState extends State<FolderListItemWidget>
     return Opacity(
       opacity: 0.3,
       child: PopupMenuButton(
+        icon: Icon(Icons.edit),
         padding: EdgeInsets.all(0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         itemBuilder: (ctx) {
@@ -100,6 +108,7 @@ class _FolderListItemWidgetState extends State<FolderListItemWidget>
                   _updateFolder,
                   'Folder Name',
                   text: widget.folder.name,
+                  maxLength: 15,
                 );
               },
             );

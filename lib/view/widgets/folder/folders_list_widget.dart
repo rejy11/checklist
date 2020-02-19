@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/folder_model.dart';
-import '../../providers/folders_provider.dart';
-import '../widgets/folder_list_item_widget.dart';
+import '../../../models/folder_model.dart';
+import '../../../providers/folders_provider.dart';
+import '../../screens/lists_screen.dart';
+import '../folder/folder_list_item_widget.dart';
 
 class FoldersListWidget extends StatefulWidget {
   @override
@@ -18,7 +19,8 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
   double _actionPanelHeight = 50;
   double _actionPanelPosition;
   double _listViewPadding = 0;
-  Duration _actionPanelSlideDuration = Duration(milliseconds: 150);
+  double _actionPanelOpacity = 1.0;
+  Duration _actionPanelSlideDuration = Duration(milliseconds: 350);
 
   @override
   void initState() {
@@ -47,6 +49,7 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
               }
               return AnimatedContainer(
                 duration: _actionPanelSlideDuration,
+                curve: Curves.ease,
                 padding: EdgeInsets.only(top: _listViewPadding),
                 child: ListView.builder(
                   itemCount: snapshot.data.length,
@@ -55,6 +58,7 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
                     return FolderListItemWidget(
                       folder: folder,
                       onLongPress: onListItemLongPress,
+                      onTap: () => _navigateToListsScreen(folder.id),
                     );
                   },
                 ),
@@ -72,73 +76,107 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
     _showPanel();
   }
 
+  void _navigateToListsScreen(int folderId) {
+    final pageRouteBuilder = PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          ListsScreen(folderId),
+      transitionsBuilder: (
+        context,
+        animation,
+        secondaryAnimation,
+        child,
+      ) {
+        var begin = Offset(1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+    Navigator.of(context).push(pageRouteBuilder);
+  }
+
   Widget _buildBottomActionPanel() {
     final bool atleastOneFolderChecked =
         Provider.of<FoldersProvider>(context, listen: false)
             .atleastOneFolderChecked();
     return AnimatedPositioned(
       top: _actionPanelPosition,
+      curve: Curves.easeOut,
       duration: _actionPanelSlideDuration,
-      child: ClipRRect(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(25),
-          bottomRight: Radius.circular(25),
-        ),
-        child: Container(
-          height: _actionPanelHeight,
-          width: MediaQuery.of(context).size.width,
-          color: Theme.of(context).colorScheme.primary,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Expanded(
-                flex: 10,
-                child: Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 17),
-                      child: Container(
-                        width: 80,
-                        child: Consumer<FoldersProvider>(
-                          builder: (context, provider, child) {
-                            return CircularCheckBox(
-                              value: provider.allFoldersChecked,
-                              onChanged: (value) {
-                                provider.toggleAllFoldersDeleteCheckbox(value);
-                              },
-                            );
-                          },
+      child: AnimatedOpacity(
+        duration: _actionPanelSlideDuration,
+        opacity: _actionPanelOpacity,
+        curve: Curves.ease,
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(25),
+            bottomRight: Radius.circular(25),
+          ),
+          child: Container(
+            height: _actionPanelHeight,
+            width: MediaQuery.of(context).size.width,
+            color: Theme.of(context).colorScheme.primary,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Expanded(
+                  flex: 10,
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(left: 17),
+                        child: Container(
+                          width: 80,
+                          child: Consumer<FoldersProvider>(
+                            builder: (context, provider, child) {
+                              return CircularCheckBox(
+                                value: provider.allFoldersChecked,
+                                onChanged: (value) {
+                                  provider
+                                      .toggleAllFoldersDeleteCheckbox(value);
+                                },
+                              );
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                    Text(
-                      'All',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    )
-                  ],
+                      Text(
+                        'All',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0),
-                child: Row(
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(MaterialCommunityIcons.delete_outline),
-                      onPressed: atleastOneFolderChecked ? _deleteFolder : null,
-                      color: Colors.white,
-                      disabledColor: Colors.white30,
-                    ),
-                    IconButton(
-                      icon: Icon(MaterialCommunityIcons.chevron_up),
-                      color: Colors.white,
-                      onPressed: () {
-                        _hidePanel();
-                      },
-                    ),
-                  ],
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 0),
+                  child: Row(
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(MaterialCommunityIcons.delete_outline),
+                        onPressed:
+                            atleastOneFolderChecked ? _deleteFolder : null,
+                        color: Colors.white,
+                        disabledColor: Colors.white30,
+                      ),
+                      IconButton(
+                        icon: Icon(MaterialCommunityIcons.chevron_up),
+                        color: Colors.white,
+                        onPressed: () {
+                          _hidePanel();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -149,6 +187,7 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
     setState(() {
       _actionPanelPosition = _actionPanelHeight * -1;
       _listViewPadding = 0;
+      _actionPanelOpacity = 1.0;
       _panelVisible = false;
     });
     Provider.of<FoldersProvider>(context, listen: false)
@@ -161,6 +200,7 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
     setState(() {
       _actionPanelPosition = 0;
       _listViewPadding = _actionPanelHeight;
+      _actionPanelOpacity = 1.0;
       _panelVisible = true;
     });
   }

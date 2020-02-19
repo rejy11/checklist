@@ -1,8 +1,8 @@
 class FolderEntity {
-  int id;
-  String folderName;
-  DateTime dateTimeCreated;
-  bool isFavourite;
+  final int id;
+  final String folderName;
+  final DateTime dateTimeCreated;
+  final bool isFavourite;
 
   FolderEntity({
     this.id,

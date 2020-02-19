@@ -4,11 +4,13 @@ class TextFieldAndSubmitDialog extends StatefulWidget {
   final Function onCompleted;
   final String inputHintText;
   final String text;
+  final int maxLength;
 
   const TextFieldAndSubmitDialog(
     this.onCompleted,
     this.inputHintText, {
     this.text,
+    this.maxLength,
   });
 
   @override
@@ -23,8 +25,8 @@ class _TextFieldAndSubmitDialogState extends State<TextFieldAndSubmitDialog> {
   @override
   void initState() {
     nameController.text = widget.text;
-    if(widget.text != null) {
-      if(widget.text.isNotEmpty) {
+    if (widget.text != null) {
+      if (widget.text.isNotEmpty) {
         canOnCompletedByCalled = true;
       }
     }
@@ -57,6 +59,8 @@ class _TextFieldAndSubmitDialogState extends State<TextFieldAndSubmitDialog> {
                     child: TextField(
                       controller: nameController,
                       autofocus: true,
+                      maxLength:
+                          widget.maxLength != null ? widget.maxLength : null,
                       onChanged: (text) {
                         if (text.isNotEmpty & !canOnCompletedByCalled) {
                           setState(() {
@@ -88,7 +92,9 @@ class _TextFieldAndSubmitDialogState extends State<TextFieldAndSubmitDialog> {
                   elevation: 0,
                   child: Icon(
                     Icons.check,
-                    color: canOnCompletedByCalled ? Theme.of(context).primaryColor : Colors.grey,
+                    color: canOnCompletedByCalled
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey,
                   ),
                 ),
               ],

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'container/injection_container.dart';
 import 'providers/folders_provider.dart';
+import 'providers/lists_provider.dart';
 import 'view/screens/folders_screen.dart';
 
 void main() async {
@@ -53,7 +54,12 @@ class App extends StatelessWidget {
             serviceLocator(),
             serviceLocator(),
           ),
-        )
+        ),
+        ChangeNotifierProvider<ListsProvider>(
+          create: (ctx) => ListsProvider(
+            serviceLocator(),
+          ),
+        ),
       ],
     );
   }
