@@ -16,6 +16,7 @@ class _FoldersScreenState extends State<FoldersScreen>
     with TickerProviderStateMixin<FoldersScreen> {
   @override
   Widget build(BuildContext context) {
+    print('folders screen rebuild');
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
@@ -68,7 +69,7 @@ class _FoldersScreenState extends State<FoldersScreen>
                     )
                   : IconButton(
                       icon: Icon(Icons.add),
-                      onPressed: () => _newFolderDialog(context),
+                      onPressed: _newFolderDialog,
                     );
             },
           ),
@@ -182,7 +183,7 @@ class _FoldersScreenState extends State<FoldersScreen>
     //SystemChrome.restoreSystemUIOverlays();
   }
 
-  _newFolderDialog(BuildContext context) {
+  _newFolderDialog() {
     showDialog(
       context: context,
       builder: (ctx) {

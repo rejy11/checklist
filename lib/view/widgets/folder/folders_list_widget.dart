@@ -32,13 +32,13 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        return Future.delayed(Duration(milliseconds: 0), () {
+        return Future.delayed(const Duration(milliseconds: 0), () {
           return _onBackPressed(); //way to wrap a synchronous method in async call
         });
       },
       child: Stack(
         children: [
-          _buildBottomActionPanel(),
+          _buildActionPanel(),
           FutureBuilder<List<FolderModel>>(
             future: Provider.of<FoldersProvider>(context).folders,
             builder: (context, snapshot) {
@@ -49,7 +49,7 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
               }
               return AnimatedContainer(
                 duration: _actionPanelSlideDuration,
-                curve: Curves.ease,
+                curve: Curves.easeOutCubic,
                 padding: EdgeInsets.only(top: _listViewPadding),
                 child: ListView.builder(
                   itemCount: snapshot.data.length,
@@ -70,45 +70,13 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
     );
   }
 
-  void onListItemLongPress() {
-    Provider.of<FoldersProvider>(context, listen: false)
-        .toggleDeleteFolderMode(true); // removes fab from screen
-    _showPanel();
-  }
-
-  void _navigateToListsScreen(int folderId) {
-    final pageRouteBuilder = PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          ListsScreen(folderId),
-      transitionsBuilder: (
-        context,
-        animation,
-        secondaryAnimation,
-        child,
-      ) {
-        var begin = Offset(1.0, 0.0);
-        var end = Offset.zero;
-        var curve = Curves.ease;
-
-        var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    );
-    Navigator.of(context).push(pageRouteBuilder);
-  }
-
-  Widget _buildBottomActionPanel() {
+  Widget _buildActionPanel() {
     final bool atleastOneFolderChecked =
         Provider.of<FoldersProvider>(context, listen: false)
             .atleastOneFolderChecked();
     return AnimatedPositioned(
       top: _actionPanelPosition,
-      curve: Curves.easeOut,
+      curve: Curves.easeOutCubic,
       duration: _actionPanelSlideDuration,
       child: AnimatedOpacity(
         duration: _actionPanelSlideDuration,
@@ -119,7 +87,8 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
             bottomLeft: Radius.circular(25),
             bottomRight: Radius.circular(25),
           ),
-          child: Container(
+          child: AnimatedContainer(
+            duration: _actionPanelSlideDuration,
             height: _actionPanelHeight,
             width: MediaQuery.of(context).size.width,
             color: Theme.of(context).colorScheme.primary,
@@ -203,6 +172,39 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
       _actionPanelOpacity = 1.0;
       _panelVisible = true;
     });
+  }
+
+  void _navigateToListsScreen(int folderId) {
+    final pageRouteBuilder = PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          ListsScreen(folderId),
+      transitionsBuilder: (
+        context,
+        animation,
+        secondaryAnimation,
+        child,
+      ) {
+        var tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+            .chain(CurveTween(curve: Curves.ease));
+        var fadeTween =
+            Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.ease));
+
+        return FadeTransition(
+          opacity: animation.drive(fadeTween),
+          child: SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          ),
+        );
+      },
+    );
+    Navigator.of(context).push(pageRouteBuilder);
+  }
+
+  void onListItemLongPress() {
+    Provider.of<FoldersProvider>(context, listen: false)
+        .toggleDeleteFolderMode(true); // removes fab from screen
+    _showPanel();
   }
 
   void _deleteFolder() {

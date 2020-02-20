@@ -1,3 +1,4 @@
+import 'package:checklist/entities/list_entity.dart';
 import 'package:checklist/models/list_model.dart';
 import 'package:flutter/foundation.dart';
 import '../repository/lists_repository.dart';
@@ -45,6 +46,20 @@ class ListsProvider extends ChangeNotifier {
 
   void loadListsForFolder(int folderId) async {
     _currentFolderId = folderId;
+    await fetchLists();
+  }
+
+  Future insertList(String text) async {
+    if(_currentFolderId == null) return;
+    
+    final newList = ListEntity(
+      name: text,
+      completed: false,
+      favourite: false,
+      dateTimeCreated: DateTime.now(),
+      folderId: _currentFolderId,
+    );
+    await _listsRepository.insertList(newList);
     await fetchLists();
   }
 

@@ -190,4 +190,10 @@ class LocalDatabase {
     );
     print('list updated');
   }
+
+  Future insertList(ListEntity list) async {
+    final db = await database;
+    await db.insert('List', list.toMap());
+    print('list inserted');
+  }
 }

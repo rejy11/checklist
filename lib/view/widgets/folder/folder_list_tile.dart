@@ -1,6 +1,5 @@
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/folder_model.dart';

@@ -52,20 +52,6 @@ class FoldersProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<FolderModel> getFolder(id) async {
-  //   final folderEntity = await _listRepository.getFolder(id);
-  //   final folderModel = FolderModel(
-  //     id: folderEntity.id,
-  //     name: folderEntity.folderName,
-  //     dateTimeCreated: folderEntity.dateTimeCreated,
-  //     isFavourite: folderEntity.isFavourite,
-  //     numberOfLists:
-  //         await _listRepository.getNumberOfListsInFolder(folderEntity.id),
-  //   );
-  //   folderModel.isCheckedToBeDeleted = isFolderChecked(folderModel.id);
-  //   return folderModel;
-  // }
-
   Future insertFolder(String name) async {
     final newFolder = FolderEntity(
       folderName: name,

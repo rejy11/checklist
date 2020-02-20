@@ -18,4 +18,7 @@ class ListsRepository {
     await _database.updateList(list);
   }
 
+  Future insertList(ListEntity list) async {
+    await _database.insertList(list);
+  }
 }
