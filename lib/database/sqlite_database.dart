@@ -196,4 +196,10 @@ class LocalDatabase {
     await db.insert('List', list.toMap());
     print('list inserted');
   }
+
+  Future deleteList(int id) async {
+    final db = await database;
+    await db.delete('List', where: 'id = ?', whereArgs: [id],);
+    print('list deleted');
+  }
 }

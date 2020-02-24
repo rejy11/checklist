@@ -30,7 +30,6 @@ class _FolderListTileState extends State<FolderListTile>
   Widget build(BuildContext context) {
     final provider = Provider.of<FoldersProvider>(context, listen: false);
     final deleteFolderMode = provider.deleteFolderMode;
-    final isFolderChecked = provider.isFolderChecked(widget.folder.id);
 
     return ClipRRect(
       borderRadius: BorderRadius.only(
@@ -45,7 +44,7 @@ class _FolderListTileState extends State<FolderListTile>
                 Provider.of<FoldersProvider>(context, listen: false)
                     .toggleFolderDeleteCheckbox(
                   widget.folder.id,
-                  !isFolderChecked,
+                  !widget.folder.isCheckedToBeDeleted,
                 );
               },
         onLongPress: widget.onLongPress,
@@ -71,7 +70,7 @@ class _FolderListTileState extends State<FolderListTile>
                   width: _checkboxContainerWidth,
                   child: _showCheckbox
                       ? CircularCheckBox(
-                          value: value.isFolderChecked(widget.folder.id),
+                          value: widget.folder.isCheckedToBeDeleted,
                           onChanged: (value) {
                             Provider.of<FoldersProvider>(context, listen: false)
                                 .toggleFolderDeleteCheckbox(

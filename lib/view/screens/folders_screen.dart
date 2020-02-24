@@ -16,6 +16,8 @@ class _FoldersScreenState extends State<FoldersScreen>
     with TickerProviderStateMixin<FoldersScreen> {
   @override
   Widget build(BuildContext context) {
+    Provider.of<FoldersProvider>(context, listen: false).loadFolders();
+
     print('folders screen rebuild');
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -33,7 +35,6 @@ class _FoldersScreenState extends State<FoldersScreen>
               'Your Folders',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            
           ],
         ),
         actions: <Widget>[

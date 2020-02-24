@@ -21,4 +21,8 @@ class ListsRepository {
   Future insertList(ListEntity list) async {
     await _database.insertList(list);
   }
+
+  Future deleteList(int id) async {
+    await _database.deleteList(id);
+  }
 }

@@ -14,6 +14,7 @@ class FolderModel {
     this.dateTimeCreated,
     this.numberOfLists,
     this.isFavourite,
+    this.isCheckedToBeDeleted,
   });
 
   FolderEntity toEntity() {

@@ -11,20 +11,19 @@ class ListsProvider extends ChangeNotifier {
 
   ListsProvider(
     this._listsRepository,
-  ) {
-    initialise();
-  }
+  );
 
-  Future<List<ListModel>> get lists async  {
+  Future<List<ListModel>> get lists async {
     return _lists;
   }
 
-  void initialise() async {
-
+  void loadListsForFolder(int folderId) async {
+    _currentFolderId = folderId;
+    await fetchLists();
   }
 
   Future fetchLists() async {
-    if(_currentFolderId == null) return; 
+    if (_currentFolderId == null) return;
 
     final listEntities = await _listsRepository.getLists(_currentFolderId);
     final listModels = List<ListModel>();
@@ -44,14 +43,9 @@ class ListsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void loadListsForFolder(int folderId) async {
-    _currentFolderId = folderId;
-    await fetchLists();
-  }
-
   Future insertList(String text) async {
-    if(_currentFolderId == null) return;
-    
+    if (_currentFolderId == null) return;
+
     final newList = ListEntity(
       name: text,
       completed: false,
@@ -68,4 +62,8 @@ class ListsProvider extends ChangeNotifier {
     await fetchLists();
   }
 
+  Future deleteList(int id) async {
+    await _listsRepository.deleteList(id);
+    await fetchLists();
+  }
 }
