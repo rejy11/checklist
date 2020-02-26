@@ -147,6 +147,7 @@ class FoldersProvider with ChangeNotifier {
   }
 
   bool get allFoldersChecked {
+    if(_folders == null) return false;
     return _folders.every((f) => f.isCheckedToBeDeleted);
   }
 }

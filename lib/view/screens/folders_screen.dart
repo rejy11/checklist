@@ -94,7 +94,6 @@ class _FoldersScreenState extends State<FoldersScreen>
     // ));
 
     showModalBottomSheet(
-      backgroundColor: Theme.of(context).backgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
       ),
