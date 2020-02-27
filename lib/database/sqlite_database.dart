@@ -37,7 +37,7 @@ class LocalDatabase {
         );
         await db.execute(
           'CREATE TABLE List(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT(15), completed INTEGER,' +
-              'favourite INTEGER, dateTimeCreated TEXT, folderId INTEGER,' +
+              'favourite INTEGER, active INTEGER, dateTimeCreated TEXT, folderId INTEGER,' +
               'FOREIGN KEY(folderId) REFERENCES Folder(id) ON DELETE CASCADE)',
         );
         await db.execute(
@@ -164,6 +164,7 @@ class LocalDatabase {
         name: l['name'],
         completed: DatabaseHelpers.intToBoolConverter(l['completed']),
         favourite: DatabaseHelpers.intToBoolConverter(l['favourite']),
+        active: DatabaseHelpers.intToBoolConverter(l['active']),
         dateTimeCreated: DateTime.parse(l['dateTimeCreated']),
         folderId: l['folderId'],
       ));

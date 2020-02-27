@@ -51,11 +51,7 @@ class _FolderListItemWidgetState extends State<FolderListItemWidget>
         elevation: 1,
         child: FolderListTile(
           folder: widget.folder,
-          onLongPress: () {
-            widget.onLongPress();
-            Provider.of<FoldersProvider>(context, listen: false)
-                .toggleFolderDeleteCheckbox(widget.folder.id, true);
-          },
+          onLongPress: widget.onLongPress,
           trailing: _buildListItemTrailing(),
           onTap: widget.onTap,
         ),

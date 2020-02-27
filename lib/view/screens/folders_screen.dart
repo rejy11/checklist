@@ -14,9 +14,15 @@ class FoldersScreen extends StatefulWidget {
 
 class _FoldersScreenState extends State<FoldersScreen>
     with TickerProviderStateMixin<FoldersScreen> {
+
+      @override
+  void initState() {
+    Provider.of<FoldersProvider>(context, listen: false).loadFolders();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
-    Provider.of<FoldersProvider>(context, listen: false).loadFolders();
+    
 
     print('folders screen rebuild');
     return Scaffold(

@@ -31,7 +31,9 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
 
   @override
   Widget build(BuildContext context) {
-    _provider = Provider.of<FoldersProvider>(context, listen: false);
+    _provider = Provider.of<FoldersProvider>(context, listen: true);
+    final folders = _provider.folders;
+
     return WillPopScope(
       onWillPop: () {
         return Future.delayed(const Duration(milliseconds: 0), () {
@@ -41,43 +43,39 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
       child: Stack(
         children: [
           _buildActionPanel(),
-          FutureBuilder<List<FolderModel>>(
-            future:
-                Provider.of<FoldersProvider>(context, listen: false).folders,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
+          folders == null
+              ? Center(
                   child: CircularProgressIndicator(),
-                );
-              }
-              return AnimatedContainer(
-                duration: _actionPanelSlideDuration,
-                curve: Curves.easeOutCubic,
-                padding: EdgeInsets.only(top: _listViewPadding),
-                child: ListView.builder(
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (context, i) {
-                    final folder = snapshot.data[i];
-                    return FolderListItemWidget(
-                      folder: folder,
-                      onLongPress: onListItemLongPress,
-                      onTap: () => _navigateToListsScreen(folder.id),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
+                )
+              : _buildListViewContainer(folders),
         ],
       ),
     );
   }
 
+  Widget _buildListViewContainer(List<FolderModel> folders) {
+    return AnimatedContainer(
+      duration: _actionPanelSlideDuration,
+      curve: Curves.easeOutCubic,
+      padding: EdgeInsets.only(top: _listViewPadding),
+      child: ListView.builder(
+        itemCount: folders.length,
+        itemBuilder: (context, i) {
+          final folder = folders[i];
+          return FolderListItemWidget(
+            folder: folder,
+            onLongPress: () => onListItemLongPress(folder.id),
+            onTap: () => _navigateToListsScreen(folder.id),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildActionPanel() {
-    final provider = Provider.of<FoldersProvider>(context);
-    final bool atleastOneFolderChecked = provider.atleastOneFolderChecked();
-    final bool allFoldersChecked = provider.allFoldersChecked;
-    final Function onCheckboxChanged = provider.toggleAllFoldersDeleteCheckbox;
+    final bool atleastOneFolderChecked = _provider.atleastOneFolderChecked();
+    final bool allFoldersChecked = _provider.allFoldersChecked;
+    final Function onCheckboxChanged = _provider.toggleAllFoldersDeleteCheckbox;
 
     return ActionPanelWidget(
       _actionPanelPosition,
@@ -166,8 +164,10 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
     Navigator.of(context).push(pageRouteBuilder);
   }
 
-  void onListItemLongPress() {
+  void onListItemLongPress(int folderId) {
     _provider.toggleDeleteFolderMode(true); // removes fab from screen
+    Provider.of<FoldersProvider>(context, listen: false)
+        .toggleFolderDeleteCheckbox(folderId, true);
     _showPanel();
   }
 
@@ -222,5 +222,3 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
     }
   }
 }
-
-

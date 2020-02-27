@@ -13,7 +13,7 @@ class ListsProvider extends ChangeNotifier {
     this._listsRepository,
   );
 
-  Future<List<ListModel>> get lists async {
+  List<ListModel> get lists {
     return _lists;
   }
 
@@ -33,6 +33,7 @@ class ListsProvider extends ChangeNotifier {
         name: list.name,
         completed: list.completed,
         favourite: list.favourite,
+        active: list.active,
         dateTimeCreated: list.dateTimeCreated,
         numberOfItems: await _listsRepository.getNumberOfItemsInList(list.id),
         folderId: list.folderId,
@@ -51,6 +52,7 @@ class ListsProvider extends ChangeNotifier {
       completed: false,
       favourite: false,
       dateTimeCreated: DateTime.now(),
+      active: false,
       folderId: _currentFolderId,
     );
     await _listsRepository.insertList(newList);

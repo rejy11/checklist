@@ -36,9 +36,9 @@ class ActionPanelWidget extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 flex: 10,
-                child: contentLeft,
+                child: contentLeft != null ? contentLeft : Container(),
               ),
-              contentRight,
+              contentRight != null ? contentRight : Container(),
             ],
           ),
         ),

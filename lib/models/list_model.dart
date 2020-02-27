@@ -5,6 +5,7 @@ class ListModel {
   String name;
   bool completed;
   bool favourite;
+  bool active;
   DateTime dateTimeCreated;
   int numberOfItems;
   int folderId;
@@ -14,6 +15,7 @@ class ListModel {
     this.name,
     this.completed,
     this.favourite,
+    this.active,
     this.dateTimeCreated,
     this.numberOfItems,
     this.folderId,
@@ -25,6 +27,7 @@ class ListModel {
       name: name,
       completed: completed,
       favourite: favourite,
+      active: active,
       dateTimeCreated: dateTimeCreated,
       folderId: folderId,
     );

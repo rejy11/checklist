@@ -21,11 +21,11 @@ class FoldersProvider with ChangeNotifier {
     this._userSettingsRepository,
   );
 
-  Future<List<FolderModel>> get folders async {
+  List<FolderModel> get folders  {
     return _folders;
   }
 
-  void loadFolders() async {
+  Future loadFolders() async {
     _orderBy = await _userSettingsRepository.getFoldersSortOrder();
     await fetchFolders();
   }
@@ -88,8 +88,9 @@ class FoldersProvider with ChangeNotifier {
 
   void toggleDeleteFolderMode(bool deleteMode) {
     deleteFolderMode = deleteMode;
-    //_checkedFolders.clear();
-    _folders.forEach((f) => f.isCheckedToBeDeleted = false);
+    
+    // every time we come in and out of deleteFolderMode, ensure all items
+    _folders.forEach((f) => f.isCheckedToBeDeleted = false); 
     notifyListeners();
   }
 

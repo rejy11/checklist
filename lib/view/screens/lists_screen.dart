@@ -16,10 +16,15 @@ class ListsScreen extends StatefulWidget {
 
 class _ListsScreenState extends State<ListsScreen> {
   @override
-  Widget build(BuildContext context) {
-    print('list screen rebuild');
+  void initState() {
     Provider.of<ListsProvider>(context, listen: false)
         .loadListsForFolder(widget.folderId);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print('list screen rebuild');
 
     return Scaffold(
       appBar: AppBar(

@@ -38,6 +38,7 @@ class DatabaseHelpers {
         completed: true,
         dateTimeCreated: DateTime.now(),
         favourite: true,
+        active: true,
         folderId: 1,
       ),
       ListEntity(
@@ -46,6 +47,7 @@ class DatabaseHelpers {
         completed: true,
         dateTimeCreated: DateTime.now(),
         favourite: false,
+        active: true,
         folderId: 1,
       ),
       ListEntity(
@@ -54,6 +56,7 @@ class DatabaseHelpers {
         completed: false,
         dateTimeCreated: DateTime.now(),
         favourite: false,
+        active: true,
         folderId: 1,
       ),
       ListEntity(
@@ -62,7 +65,8 @@ class DatabaseHelpers {
         completed: true,
         dateTimeCreated: DateTime.now(),
         favourite: false,
-        folderId: 2,
+        active: true,
+        folderId: 3,
       ),
       ListEntity(
         id: 5,
@@ -70,7 +74,8 @@ class DatabaseHelpers {
         completed: false,
         dateTimeCreated: DateTime.now(),
         favourite: false,
-        folderId: 2,
+        active: true,
+        folderId: 3,
       ),
       ListEntity(
         id: 6,
@@ -78,6 +83,34 @@ class DatabaseHelpers {
         completed: false,
         dateTimeCreated: DateTime.now(),
         favourite: true,
+        active: true,
+        folderId: 3,
+      ),
+      ListEntity(
+        id: 7,
+        name: 'Moving House',
+        completed: true,
+        dateTimeCreated: DateTime.now(),
+        favourite: false,
+        active: false,
+        folderId: 3,
+      ),
+      ListEntity(
+        id: 8,
+        name: 'Christmas Presents',
+        completed: false,
+        dateTimeCreated: DateTime.now(),
+        favourite: false,
+        active: false,
+        folderId: 3,
+      ),
+      ListEntity(
+        id: 9,
+        name: 'Project Tasks',
+        completed: false,
+        dateTimeCreated: DateTime.now(),
+        favourite: true,
+        active: false,
         folderId: 3,
       ),
     ];

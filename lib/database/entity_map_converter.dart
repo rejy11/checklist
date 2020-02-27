@@ -19,6 +19,7 @@ extension ListConversion on ListEntity {
       'name': this.name,
       'completed': this.completed,
       'favourite': this.favourite,
+      'active': this.active,
       'dateTimeCreated': this.dateTimeCreated.toString(),
       'folderId': this.folderId,
     };
