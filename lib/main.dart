@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'container/injection_container.dart';
 import 'providers/folders_provider.dart';
+import 'providers/list_items_provider.dart';
 import 'providers/lists_provider.dart';
 import 'view/screens/folders_screen.dart';
 
@@ -57,6 +58,11 @@ class App extends StatelessWidget {
         ),
         ChangeNotifierProvider<ListsProvider>(
           create: (ctx) => ListsProvider(
+            serviceLocator(),
+          ),
+        ),
+        ChangeNotifierProvider<ListItemsProvider>(
+          create: (ctx) => ListItemsProvider(
             serviceLocator(),
           ),
         ),

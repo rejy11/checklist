@@ -80,22 +80,6 @@ class _ListListItemWidgetState extends State<ListListItemWidget>
                         ),
                         backgroundColor: Theme.of(context).accentColor,
                       );
-                      // if (value.deleteFolderMode) {
-                      //   return CircularCheckBox(
-                      //     value: value.isFolderChecked(folder.id),
-                      //     onChanged: (value) {
-                      //       Provider.of<ListsProvider>(context, listen: false)
-                      //           .toggleFolderDeleteCheckbox(folder.id, value);
-                      //     },
-                      //   );
-                      // } else {
-                      //   return Icon(
-                      //     folder.isFavourite
-                      //         ? MaterialCommunityIcons.folder_star_outline
-                      //         : MaterialCommunityIcons.folder_outline,
-                      //     color: Theme.of(context).accentColor,
-                      //   );
-                      // }
                     },
                   ),
                 ),
@@ -133,13 +117,40 @@ class _ListListItemWidgetState extends State<ListListItemWidget>
                 Expanded(child: SizedBox()),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: CircularCheckBox(
-                    value: widget.list.completed,
-                    onChanged: (value) {
-                      widget.list.completed = value;
-                      Provider.of<ListsProvider>(context, listen: false)
-                          .updateList(widget.list);
-                    },
+                  child: Opacity(
+                    opacity: 0.3,
+                    child: PopupMenuButton(
+                      itemBuilder: (context) {
+                        final textStyle = TextStyle(fontSize: 14);
+                        return [
+                          widget.list.active
+                              ? PopupMenuItem(
+                                  child: Text(
+                                    'Move to inactive',
+                                    style: textStyle,
+                                  ),
+                                  value: 1,
+                                )
+                              : PopupMenuItem(
+                                  child:
+                                      Text('Move to active', style: textStyle),
+                                  value: 2,
+                                ),
+                        ];
+                      },
+                      onSelected: (value) {
+                        if (value == 1) {
+                          widget.list.active = false;
+                        } else if (value == 2) {
+                          widget.list.active = true;
+                        }
+                        Provider.of<ListsProvider>(context, listen: false)
+                            .updateList(widget.list);
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
                   ),
                 ),
               ],

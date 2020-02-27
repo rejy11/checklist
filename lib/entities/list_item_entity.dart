@@ -1,8 +1,13 @@
 class ListItemEntity {
   final int id;
-  String name;
-  bool completed;
-  int listId;
+  final String name;
+  final bool completed;
+  final int listId;
 
-  ListItemEntity({this.id});
+  ListItemEntity({
+    this.id,
+    this.name,
+    this.completed,
+    this.listId
+  });
 }

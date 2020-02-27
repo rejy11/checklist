@@ -65,7 +65,7 @@ class _FolderListItemWidgetState extends State<FolderListItemWidget>
       child: PopupMenuButton(
         icon: Icon(Icons.edit),
         padding: EdgeInsets.all(0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         itemBuilder: (ctx) {
           return [
             PopupMenuItem(

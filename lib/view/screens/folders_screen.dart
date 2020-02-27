@@ -7,24 +7,11 @@ import '../../providers/folders_provider.dart';
 import '../widgets/core/text_field_submit_dialog.dart';
 import '../widgets/folder/folders_list_widget.dart';
 
-class FoldersScreen extends StatefulWidget {
-  @override
-  _FoldersScreenState createState() => _FoldersScreenState();
-}
-
-class _FoldersScreenState extends State<FoldersScreen>
-    with TickerProviderStateMixin<FoldersScreen> {
-
-      @override
-  void initState() {
-    Provider.of<FoldersProvider>(context, listen: false).loadFolders();
-    super.initState();
-  }
+class FoldersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    
+    Provider.of<FoldersProvider>(context, listen: false).loadFolders();
 
-    print('folders screen rebuild');
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
@@ -76,7 +63,21 @@ class _FoldersScreenState extends State<FoldersScreen>
                     )
                   : IconButton(
                       icon: Icon(Icons.add),
-                      onPressed: _newFolderDialog,
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) {
+                            return TextFieldAndSubmitDialog(
+                              (text) async =>
+                                  await Provider.of<FoldersProvider>(context,
+                                          listen: false)
+                                      .insertFolder(text),
+                              'Folder Name',
+                              maxLength: 15,
+                            );
+                          },
+                        );
+                      },
                     );
             },
           ),
@@ -187,23 +188,5 @@ class _FoldersScreenState extends State<FoldersScreen>
       },
     );
     //SystemChrome.restoreSystemUIOverlays();
-  }
-
-  _newFolderDialog() {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return TextFieldAndSubmitDialog(
-          _insertFolder,
-          'Folder Name',
-          maxLength: 15,
-        );
-      },
-    );
-  }
-
-  _insertFolder(String text) async {
-    await Provider.of<FoldersProvider>(context, listen: false)
-        .insertFolder(text);
   }
 }

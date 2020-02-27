@@ -1,11 +1,12 @@
-import 'package:checklist/entities/list_entity.dart';
-import 'package:checklist/enums/folders_order_by.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import './database_helpers.dart';
 import '../entities/folder_entity.dart';
+import '../entities/list_entity.dart';
+import '../entities/list_item_entity.dart';
+import '../enums/folders_order_by.dart';
 import 'entity_map_converter.dart';
 
 class LocalDatabase {
@@ -53,26 +54,6 @@ class LocalDatabase {
         for (var list in lists) {
           await db.insert('List', list.toMap());
         }
-
-        // for (var i = 0; i < 10; i++) {
-        //   final folder = FolderEntity(
-        //     id: i,
-        //     folderName: 'Test $i folder',
-        //     dateTimeCreated: DateTime.now(),
-        //     isFavourite: i % 2 == 0 ? true : false,
-        //   );
-        //   final list = ListEntity(
-        //     id: i,
-        //     name: 'Test $i List',
-        //     completed: false,
-        //     dateTimeCreated: DateTime.now(),
-        //     favourite: false,
-        //     folderId: i,
-        //   );
-
-        //   await db.insert('Folder', folder.toMap());
-        //   await db.insert('List', list.toMap());
-        // }
       },
     );
   }
@@ -200,7 +181,54 @@ class LocalDatabase {
 
   Future deleteList(int id) async {
     final db = await database;
-    await db.delete('List', where: 'id = ?', whereArgs: [id],);
+    await db.delete(
+      'List',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
     print('list deleted');
+  }
+
+  // LIST ITEMS ---------------------------------------------------------------------
+
+  Future<List<ListItemEntity>> listItems(int listId) async {
+    final db = await database;
+    final listItemMaps = await db.query(
+      'ListItem',
+      where: 'listId = ?',
+      whereArgs: [listId],
+    );
+    final listItems = List<ListItemEntity>();
+
+    listItemMaps.forEach((l) {
+      listItems.add(ListItemEntity(
+        id: l['id'],
+        name: l['name'],
+        completed: DatabaseHelpers.intToBoolConverter(l['completed']),
+        listId: l['listId'],
+      ));
+    });
+
+    return listItems;
+  }
+
+  Future insertListItem(ListItemEntity listItem) async {
+    final db = await database;
+    await db.insert('ListItem', listItem.toMap());
+  }
+
+  Future updateListItem(ListItemEntity listItem) async {
+    final db = await database;
+    await db.update(
+      'ListItem',
+      listItem.toMap(),
+      where: "id = ?",
+      whereArgs: [listItem.id],
+    );
+  }
+
+  Future deleteListItem(int id) async {
+    final db = await database;
+    await db.delete('ListItem', where: 'id = ?', whereArgs: [id]);
   }
 }

@@ -4,9 +4,7 @@ class ListEntity {
   final bool completed;
   final bool favourite;
   final bool active;
-  //final int sortOrderIndex;
   final DateTime dateTimeCreated;
-  //final List<ListItemEntity> items;
   final int folderId;
 
   ListEntity({
@@ -15,9 +13,7 @@ class ListEntity {
     this.completed,
     this.favourite,
     this.active,
-    //this.sortOrderIndex,
     this.dateTimeCreated,
-    //this.items,
     this.folderId,
   });
 }

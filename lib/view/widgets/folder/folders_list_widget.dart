@@ -65,7 +65,7 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
           return FolderListItemWidget(
             folder: folder,
             onLongPress: () => onListItemLongPress(folder.id),
-            onTap: () => _navigateToListsScreen(folder.id),
+            onTap: () => _navigateToListsScreen(folder.id, folder.name),
           );
         },
       ),
@@ -137,10 +137,10 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
     });
   }
 
-  void _navigateToListsScreen(int folderId) {
+  void _navigateToListsScreen(int folderId, String folderName) {
     final pageRouteBuilder = PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
-          ListsScreen(folderId),
+          ListsScreen(folderId, folderName),
       transitionsBuilder: (
         context,
         animation,

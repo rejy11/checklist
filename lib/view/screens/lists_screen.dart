@@ -5,26 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 
-class ListsScreen extends StatefulWidget {
+class ListsScreen extends StatelessWidget {
   final int folderId;
+  final String folderName;
 
-  ListsScreen(this.folderId);
-
-  @override
-  _ListsScreenState createState() => _ListsScreenState();
-}
-
-class _ListsScreenState extends State<ListsScreen> {
-  @override
-  void initState() {
-    Provider.of<ListsProvider>(context, listen: false)
-        .loadListsForFolder(widget.folderId);
-    super.initState();
-  }
+  ListsScreen(
+    this.folderId,
+    this.folderName,
+  );
 
   @override
   Widget build(BuildContext context) {
-    print('list screen rebuild');
+    Provider.of<ListsProvider>(context, listen: false)
+        .loadListsForFolder(folderId);
 
     return Scaffold(
       appBar: AppBar(
@@ -35,7 +28,7 @@ class _ListsScreenState extends State<ListsScreen> {
               child: Icon(MaterialCommunityIcons.format_list_checkbox),
             ),
             Text(
-              'Lists',
+              folderName,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -45,29 +38,25 @@ class _ListsScreenState extends State<ListsScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),
-            onPressed: _newListDialog,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (ctx) {
+                  return TextFieldAndSubmitDialog(
+                    (text) async =>
+                        await Provider.of<ListsProvider>(context, listen: false)
+                            .insertList(text),
+                    'List Name',
+                    maxLength: 15,
+                  );
+                },
+              );
+            },
           ),
         ],
       ),
       backgroundColor: Theme.of(context).backgroundColor,
       body: ListsListWidget(),
     );
-  }
-
-  _newListDialog() {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return TextFieldAndSubmitDialog(
-          _insertList,
-          'List Name',
-          maxLength: 15,
-        );
-      },
-    );
-  }
-
-  _insertList(String text) async {
-    await Provider.of<ListsProvider>(context, listen: false).insertList(text);
   }
 }

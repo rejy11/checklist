@@ -1,3 +1,5 @@
+import 'package:checklist/entities/list_item_entity.dart';
+
 import '../entities/folder_entity.dart';
 import '../entities/list_entity.dart';
 
@@ -22,6 +24,17 @@ extension ListConversion on ListEntity {
       'active': this.active,
       'dateTimeCreated': this.dateTimeCreated.toString(),
       'folderId': this.folderId,
+    };
+  }
+}
+
+extension ListItemConversion on ListItemEntity {
+  Map<String, dynamic> toMap() {
+    return {
+      'id': this.id,
+      'name': this.name,
+      'completed': this.completed,
+      'listId': this.listId,
     };
   }
 }

@@ -1,4 +1,5 @@
 import 'package:checklist/models/list_model.dart';
+import 'package:checklist/view/screens/list_screen.dart';
 import 'package:checklist/view/widgets/core/action_panel_widget.dart';
 import 'package:checklist/view/widgets/list/list_list_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,7 @@ class _ListsListWidgetState extends State<ListsListWidget>
               return ListListItemWidget(
                 list: activeLists[index],
                 onLongPress: onListItemLongPress,
-                onTap: () {},
+                onTap: () => _navigateToListItemScreen(activeLists[index].id, activeLists[index].name),
               );
             }, childCount: activeLists.length),
           ),
@@ -84,7 +85,7 @@ class _ListsListWidgetState extends State<ListsListWidget>
               return ListListItemWidget(
                 list: inactiveLists[index],
                 onLongPress: onListItemLongPress,
-                onTap: () {},
+                onTap: () => _navigateToListItemScreen(inactiveLists[index].id, inactiveLists[index].name),
               );
             }, childCount: inactiveLists.length),
           ),
@@ -129,6 +130,33 @@ class _ListsListWidgetState extends State<ListsListWidget>
       return true;
     }
   }
+
+  void _navigateToListItemScreen(int listId, String listName) {
+    final pageRouteBuilder = PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          ListScreen(listId, listName),
+      transitionsBuilder: (
+        context,
+        animation,
+        secondaryAnimation,
+        child,
+      ) {
+        var tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+            .chain(CurveTween(curve: Curves.ease));
+        var fadeTween =
+            Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.ease));
+
+        return FadeTransition(
+          opacity: animation.drive(fadeTween),
+          child: SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          ),
+        );
+      },
+    );
+    Navigator.of(context).push(pageRouteBuilder);
+  }
 }
 
 class MySliverPersistentHeader implements SliverPersistentHeaderDelegate {
@@ -147,14 +175,14 @@ class MySliverPersistentHeader implements SliverPersistentHeaderDelegate {
       builder: (context, constraints) {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 20),
-          color: Theme.of(context).accentColor,
+          color: Theme.of(context).primaryColorLight,
           height: constraints.maxHeight,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
-                title,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                title, 
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white70),
               ),
             ],
           ),
