@@ -12,7 +12,6 @@ class FoldersProvider with ChangeNotifier {
 
   List<FolderModel> _folders;
   bool deleteFolderMode = false;
-  bool _allFoldersCheckedCheckBox = false;
   List<int> _checkedFolders = List<int>();
   FoldersOrderBy _orderBy;
 
@@ -61,14 +60,6 @@ class FoldersProvider with ChangeNotifier {
   }
 
   Future deleteFolders() async {
-    // if (_checkedFolders.length == 0) return;
-    // for (var folder in _checkedFolders) {
-    //   await _foldersRepository.deleteFolder(folder);
-    // }
-    // deleteFolderMode = false;
-    // _checkedFolders.clear();
-    // await fetchFolders();
-
     final foldersToBeDeleted =
         _folders.where((f) => f.isCheckedToBeDeleted).toList();
     if (foldersToBeDeleted.length == 0) return;
@@ -97,7 +88,6 @@ class FoldersProvider with ChangeNotifier {
   void toggleFolderDeleteCheckbox(int folderId, bool value) {
     if (_checkedFolders.contains(folderId)) {
       _checkedFolders.remove(folderId);
-      _allFoldersCheckedCheckBox = false;
     } else {
       _checkedFolders.add(folderId);
     }
@@ -107,18 +97,6 @@ class FoldersProvider with ChangeNotifier {
   }
 
   void toggleAllFoldersDeleteCheckbox(bool value) async {
-    // if (!value) {
-    //   _checkedFolders.clear();
-    //   _allFoldersCheckedCheckBox = false;
-    // } else {
-    //   _allFoldersCheckedCheckBox = true;
-    //   if (_checkedFolders.isNotEmpty) {
-    //     _checkedFolders.clear();
-    //   }
-    //   for (var folder in _folders) {
-    //     _checkedFolders.add(folder.id);
-    //   }
-    // }
     _folders.forEach((f) => f.isCheckedToBeDeleted = value);
     if (value) {
       _checkedFolders.addAll(_folders.map((f) => f.id));
@@ -130,12 +108,7 @@ class FoldersProvider with ChangeNotifier {
 
   bool atleastOneFolderChecked() {
      return _checkedFolders.length > 0;
-    //return _folders.any((f) => f.isCheckedToBeDeleted);
   }
-
-  // bool isFolderChecked(int folderId) {
-  //   return _checkedFolders.contains(folderId);
-  // }
 
   void setOrderBy(FoldersOrderBy orderBy) async {
     _orderBy = orderBy;

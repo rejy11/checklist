@@ -1,4 +1,6 @@
+import 'package:checklist/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'container/injection_container.dart';
@@ -32,6 +34,8 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: Color.fromARGB(255, 63, 76, 107)));
     return MultiProvider(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -39,7 +43,7 @@ class App extends StatelessWidget {
         theme: ThemeData(
           colorScheme: colourScheme,
           brightness: Brightness.light,
-          primaryColor: Colors.indigo[500],
+          primaryColor: BACKGROUND_GRADIENT_START,
           accentColor: Colors.amber[500],
           backgroundColor: colourScheme.background,
           errorColor: Colors.red[600],
