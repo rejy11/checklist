@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../enums/folders_order_by.dart';
 import '../../providers/folders_provider.dart';
 import '../widgets/core/text_field_submit_dialog.dart';
-import '../widgets/folder/folders_list_widget.dart';
+import '../widgets/folders/folders_list_widget.dart';
 
 class FoldersScreen extends StatelessWidget {
   @override

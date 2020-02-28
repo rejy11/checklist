@@ -1,12 +1,12 @@
-import 'package:checklist/models/list_model.dart';
-import 'package:checklist/view/screens/list_screen.dart';
-import 'package:checklist/view/widgets/core/action_panel_widget.dart';
-import 'package:checklist/view/widgets/list/list_list_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/rendering/sliver_persistent_header.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/list_model.dart';
 import '../../../providers/lists_provider.dart';
+import '../../screens/list_screen.dart';
+import '../core/action_panel_widget.dart';
+import 'lists_list_item_widget.dart';
 
 class ListsListWidget extends StatefulWidget {
   @override
@@ -68,7 +68,7 @@ class _ListsListWidgetState extends State<ListsListWidget>
           SliverList(
             delegate:
                 SliverChildBuilderDelegate((BuildContext context, int index) {
-              return ListListItemWidget(
+              return ListsListItemWidget(
                 list: activeLists[index],
                 onLongPress: onListItemLongPress,
                 onTap: () => _navigateToListItemScreen(activeLists[index].id, activeLists[index].name),
@@ -82,7 +82,7 @@ class _ListsListWidgetState extends State<ListsListWidget>
           SliverList(
             delegate:
                 SliverChildBuilderDelegate((BuildContext context, int index) {
-              return ListListItemWidget(
+              return ListsListItemWidget(
                 list: inactiveLists[index],
                 onLongPress: onListItemLongPress,
                 onTap: () => _navigateToListItemScreen(inactiveLists[index].id, inactiveLists[index].name),
@@ -201,8 +201,11 @@ class MySliverPersistentHeader implements SliverPersistentHeaderDelegate {
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
 
   @override
+  // TODO: implement snapConfiguration
   FloatingHeaderSnapConfiguration get snapConfiguration => null;
 
   @override
+  // TODO: implement stretchConfiguration
   OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
+
 }

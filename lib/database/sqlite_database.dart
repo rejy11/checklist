@@ -54,6 +54,10 @@ class LocalDatabase {
         for (var list in lists) {
           await db.insert('List', list.toMap());
         }
+        final listItems = DatabaseHelpers.generateListItemTestData();
+        for (var item in listItems) {
+          await db.insert('ListItem', item.toMap());
+        }
       },
     );
   }

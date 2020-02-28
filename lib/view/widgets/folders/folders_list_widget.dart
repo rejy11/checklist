@@ -7,7 +7,7 @@ import '../../../models/folder_model.dart';
 import '../../../providers/folders_provider.dart';
 import '../../screens/lists_screen.dart';
 import '../core/action_panel_widget.dart';
-import '../folder/folder_list_item_widget.dart';
+import '../folders/folders_list_item_widget.dart';
 
 class FoldersListWidget extends StatefulWidget {
   @override
@@ -62,7 +62,7 @@ class _FoldersListWidgetState extends State<FoldersListWidget>
         itemCount: folders.length,
         itemBuilder: (context, i) {
           final folder = folders[i];
-          return FolderListItemWidget(
+          return FoldersListItemWidget(
             folder: folder,
             onLongPress: () => onListItemLongPress(folder.id),
             onTap: () => _navigateToListsScreen(folder.id, folder.name),

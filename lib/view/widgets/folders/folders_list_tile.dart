@@ -5,13 +5,13 @@ import 'package:provider/provider.dart';
 import '../../../models/folder_model.dart';
 import '../../../providers/folders_provider.dart';
 
-class FolderListTile extends StatefulWidget {
+class FoldersListTile extends StatefulWidget {
   final FolderModel folder;
   final Function onTap;
   final Function onLongPress;
   final Widget trailing;
 
-  const FolderListTile({
+  const FoldersListTile({
     this.folder,
     this.onTap,
     this.onLongPress,
@@ -19,10 +19,10 @@ class FolderListTile extends StatefulWidget {
   });
 
   @override
-  _FolderListTileState createState() => _FolderListTileState();
+  _FoldersListTileState createState() => _FoldersListTileState();
 }
 
-class _FolderListTileState extends State<FolderListTile>
+class _FoldersListTileState extends State<FoldersListTile>
     with SingleTickerProviderStateMixin {
   double _checkboxContainerWidth = 0;
 

@@ -1,9 +1,10 @@
-import 'package:checklist/providers/lists_provider.dart';
-import 'package:checklist/view/widgets/core/text_field_submit_dialog.dart';
-import 'package:checklist/view/widgets/list/lists_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
+
+import '../../providers/lists_provider.dart';
+import '../widgets/core/text_field_submit_dialog.dart';
+import '../widgets/lists/lists_list_widget.dart';
 
 class ListsScreen extends StatelessWidget {
   final int folderId;

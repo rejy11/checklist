@@ -4,24 +4,24 @@ import 'package:provider/provider.dart';
 import '../../../models/folder_model.dart';
 import '../../../providers/folders_provider.dart';
 import '../core/text_field_submit_dialog.dart';
-import 'folder_list_tile.dart';
+import 'folders_list_tile.dart';
 
-class FolderListItemWidget extends StatefulWidget {
+class FoldersListItemWidget extends StatefulWidget {
   final FolderModel folder;
   final Function onLongPress;
   final Function onTap;
 
-  const FolderListItemWidget({
+  const FoldersListItemWidget({
     this.folder,
     this.onLongPress,
     this.onTap,
   });
 
   @override
-  _FolderListItemWidgetState createState() => _FolderListItemWidgetState();
+  _FoldersListItemWidgetState createState() => _FoldersListItemWidgetState();
 }
 
-class _FolderListItemWidgetState extends State<FolderListItemWidget>
+class _FoldersListItemWidgetState extends State<FoldersListItemWidget>
     with SingleTickerProviderStateMixin {
   AnimationController _slideController;
   Animation<Offset> _offset;
@@ -49,7 +49,7 @@ class _FolderListItemWidgetState extends State<FolderListItemWidget>
         ),
         margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         elevation: 1,
-        child: FolderListTile(
+        child: FoldersListTile(
           folder: widget.folder,
           onLongPress: widget.onLongPress,
           trailing: _buildListItemTrailing(),
