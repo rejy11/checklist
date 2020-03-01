@@ -1,11 +1,8 @@
-import 'package:checklist/view/widgets/list/list_item_widget.dart';
-import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 
-import '../../../models/list_item_model.dart';
 import '../../../providers/list_items_provider.dart';
+import 'list_item_widget.dart';
 
 class ListWidget extends StatefulWidget {
   @override

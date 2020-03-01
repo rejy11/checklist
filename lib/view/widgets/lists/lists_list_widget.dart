@@ -175,7 +175,7 @@ class MySliverPersistentHeader implements SliverPersistentHeaderDelegate {
       builder: (context, constraints) {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 20),
-          color: Theme.of(context).primaryColorLight,
+          //color: Theme.of(context).primaryColorLight,
           height: constraints.maxHeight,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,

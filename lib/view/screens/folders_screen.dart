@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../constants.dart' as Constants;
 import '../../enums/folders_order_by.dart';
 import '../../providers/folders_provider.dart';
 import '../widgets/core/text_field_submit_dialog.dart';
@@ -12,83 +13,105 @@ class FoldersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Provider.of<FoldersProvider>(context, listen: false).loadFolders();
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: false,
-        titleSpacing: 30,
-        title: Row(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(right: 8),
-              child: Icon(MaterialCommunityIcons.folder_outline),
+    return SafeArea(
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        resizeToAvoidBottomInset: true,
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Row(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(right: 8),
+                child: Icon(MaterialCommunityIcons.folder_outline),
+              ),
+              Text(
+                'Your Folders',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            Consumer<FoldersProvider>(
+              builder: (context, value, child) {
+                final deleteFolderMode = value.deleteFolderMode;
+                return PopupMenuButton(
+                  enabled: !deleteFolderMode,
+                  onSelected: (value) {
+                    if (value == 'SortOrder') {
+                      _showSortOrderBottomSheet(context);
+                    }
+                  },
+                  itemBuilder: (ctx) {
+                    return [
+                      PopupMenuItem(
+                        child: Text('Sort Order'),
+                        value: 'SortOrder',
+                      ),
+                    ];
+                  },
+                );
+              },
             ),
-            Text(
-              'Your Folders',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            Consumer<FoldersProvider>(
+              builder: (context, value, child) {
+                final deleteFolderMode = value.deleteFolderMode;
+                return deleteFolderMode
+                    ? IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: null,
+                        disabledColor: Theme.of(context).disabledColor,
+                      )
+                    : IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) {
+                              return TextFieldAndSubmitDialog(
+                                (text) async =>
+                                    await Provider.of<FoldersProvider>(context,
+                                            listen: false)
+                                        .insertFolder(text),
+                                'Folder Name',
+                                maxLength: 15,
+                              );
+                            },
+                          );
+                        },
+                      );
+              },
             ),
           ],
         ),
-        actions: <Widget>[
-          Consumer<FoldersProvider>(
-            builder: (context, value, child) {
-              final deleteFolderMode = value.deleteFolderMode;
-              return PopupMenuButton(
-                enabled: !deleteFolderMode,
-                onSelected: (value) {
-                  if (value == 'SortOrder') {
-                    _showSortOrderBottomSheet(context);
-                  }
-                },
-                itemBuilder: (ctx) {
-                  return [
-                    PopupMenuItem(
-                      child: Text('Sort Order'),
-                      value: 'SortOrder',
-                    ),
-                  ];
-                },
-              );
-            },
-          ),
-          Consumer<FoldersProvider>(
-            builder: (context, value, child) {
-              final deleteFolderMode = value.deleteFolderMode;
-              return deleteFolderMode
-                  ? IconButton(
-                      icon: Icon(Icons.add),
-                      onPressed: null,
-                      disabledColor: Theme.of(context).disabledColor,
-                    )
-                  : IconButton(
-                      icon: Icon(Icons.add),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) {
-                            return TextFieldAndSubmitDialog(
-                              (text) async =>
-                                  await Provider.of<FoldersProvider>(context,
-                                          listen: false)
-                                      .insertFolder(text),
-                              'Folder Name',
-                              maxLength: 15,
-                            );
-                          },
-                        );
-                      },
-                    );
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: FoldersListWidget(),
-          ),
-        ],
+        body: Column(
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 56),
+                  child: MediaQuery.removePadding(
+                    context: context,
+                    removeTop: true,
+                    child: FoldersListWidget(),
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Constants.BACKGROUND_GRADIENT_START,
+                      Constants.BACKGROUND_GRADIENT_END,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
