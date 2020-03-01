@@ -30,6 +30,7 @@ class _FoldersListTileState extends State<FoldersListTile>
   Widget build(BuildContext context) {
     final provider = Provider.of<FoldersProvider>(context, listen: false);
     final deleteFolderMode = provider.deleteFolderMode;
+    print('folder ${widget.folder.id} rebuilt');
 
     return ClipRRect(
       borderRadius: BorderRadius.only(

@@ -1,5 +1,7 @@
+import 'package:checklist/view/widgets/list/list_item_widget.dart';
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/list_item_model.dart';
@@ -12,7 +14,6 @@ class ListWidget extends StatefulWidget {
 
 class _ListWidgetState extends State<ListWidget> {
   TextEditingController _nameController = TextEditingController();
-  bool _canOnCompletedByCalled = false;
   FocusNode _focusNode = FocusNode();
 
   @override
@@ -24,9 +25,6 @@ class _ListWidgetState extends State<ListWidget> {
   @override
   Widget build(BuildContext context) {
     final listItems = Provider.of<ListItemsProvider>(context).listItems;
-    final statusBarHeight = MediaQuery.of(context).viewPadding.top;
-    print(statusBarHeight);
-
     return listItems == null
         ? Center(
             child: CircularProgressIndicator(),
@@ -34,7 +32,6 @@ class _ListWidgetState extends State<ListWidget> {
         : Padding(
             padding: EdgeInsets.only(top: 0),
             child: Column(
-              // mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Expanded(
                   child: GestureDetector(
@@ -50,7 +47,10 @@ class _ListWidgetState extends State<ListWidget> {
                         removeTop: true,
                         child: ListView.builder(
                           itemBuilder: (context, i) {
-                            return _buildListItem(listItems[i]);
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              child: ListItemWidget(listItems[i]),
+                            );
                           },
                           itemCount: listItems.length,
                         ),
@@ -65,7 +65,7 @@ class _ListWidgetState extends State<ListWidget> {
                   child: Container(
                     padding: EdgeInsets.only(left: 25),
                     height: 60,
-                    color: Colors.white,
+                    color: Colors.white24,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
@@ -74,8 +74,9 @@ class _ListWidgetState extends State<ListWidget> {
                             keyboardType: TextInputType.text,
                             controller: _nameController,
                             focusNode: _focusNode,
+                            style: TextStyle(color: Colors.white),
                             decoration: InputDecoration(
-                              hintText: 'New item',
+                              hintText: 'New item',hintStyle: TextStyle(color: Colors.white60),
                               border: InputBorder.none,
                             ),
                             onChanged: (_) {
@@ -103,84 +104,6 @@ class _ListWidgetState extends State<ListWidget> {
               ],
             ),
           );
-  }
-
-  Widget _buildListItem(ListItemModel item) {
-    return Dismissible(
-      key: UniqueKey(),
-      onDismissed: (direction) {},
-      background: Card(
-        color: Colors.white30,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        margin: EdgeInsets.symmetric(vertical: 5),
-        child: InkWell(
-          onTap: () {},
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Text(
-                    item.name,
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                ),
-                CircularCheckBox(
-                  value: item.completed,
-                  onChanged: (value) {
-                    item.completed = value;
-                    Provider.of<ListItemsProvider>(context, listen: false)
-                        .updateListItem(item);
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(0),
-        child: Card(
-          color: Colors.white30,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          margin: EdgeInsets.symmetric(vertical: 5),
-          child: InkWell(
-            onTap: () {},
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      item.name,
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ),
-                  CircularCheckBox(
-                    value: item.completed,
-                    onChanged: (value) {
-                      item.completed = value;
-                      Provider.of<ListItemsProvider>(context, listen: false)
-                          .updateListItem(item);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
   void _addItemToList() {

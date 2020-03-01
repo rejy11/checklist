@@ -35,7 +35,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Color.fromARGB(255, 63, 76, 107)));
+        SystemUiOverlayStyle(statusBarColor: BACKGROUND_GRADIENT_START));
     return MultiProvider(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

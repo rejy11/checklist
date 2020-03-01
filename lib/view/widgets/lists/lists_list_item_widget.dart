@@ -36,6 +36,7 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
 
   @override
   Widget build(BuildContext context) {
+    print('dd');
     return SlideTransition(
       position: _offset,
       child: Card(
