@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants.dart' as Constants;
@@ -31,10 +30,10 @@ class ListsScreen extends StatelessWidget {
           elevation: 0,
           title: Row(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Icon(MaterialCommunityIcons.format_list_checkbox),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.only(right: 8),
+              //   child: Icon(MaterialCommunityIcons.format_list_checkbox),
+              // ),
               Text(
                 folderName,
                 style: TextStyle(fontWeight: FontWeight.bold),

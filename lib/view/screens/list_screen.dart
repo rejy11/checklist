@@ -26,9 +26,7 @@ class ListScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Text(listName,
-              style:
-                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+          title: Text(listName, style: TextStyle(fontWeight: FontWeight.bold)),
         ),
         body: Container(
           child: ListWidget(),
@@ -37,19 +35,9 @@ class ListScreen extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                // Color.fromARGB(255, 155, 197, 195),
-                // Color.fromARGB(255, 97, 97, 97),
-
                 Constants.BACKGROUND_GRADIENT_START,
                 Constants.BACKGROUND_GRADIENT_END,
-
-                // Color.fromARGB(255, 19, 106, 138),
-                // Color.fromARGB(255, 38, 120, 113),
-
-                // Color.fromARGB(255, 19, 80, 88),
-                // Color.fromARGB(255, 241, 242, 181)
               ],
-              // stops: [0.3, 1]
             ),
           ),
         ),

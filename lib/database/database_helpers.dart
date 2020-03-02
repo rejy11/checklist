@@ -15,16 +15,16 @@ class DatabaseHelpers {
         dateTimeCreated: DateTime.now(),
         isFavourite: false,
       ),
-      FolderEntity(
-        folderName: 'Important',
-        dateTimeCreated: DateTime.now(),
-        isFavourite: true,
-      ),
-      FolderEntity(
-        folderName: 'Work Related',
-        dateTimeCreated: DateTime.now(),
-        isFavourite: false,
-      ),
+      // FolderEntity(
+      //   folderName: 'Important',
+      //   dateTimeCreated: DateTime.now(),
+      //   isFavourite: true,
+      // ),
+      // FolderEntity(
+      //   folderName: 'Work Related',
+      //   dateTimeCreated: DateTime.now(),
+      //   isFavourite: false,
+      // ),
     ];
   }
 
@@ -60,7 +60,7 @@ class DatabaseHelpers {
         dateTimeCreated: DateTime.now(),
         favourite: false,
         active: true,
-        folderId: 3,
+        folderId: 1,
       ),
       ListEntity(
         name: 'Christmas Presents',
@@ -68,7 +68,7 @@ class DatabaseHelpers {
         dateTimeCreated: DateTime.now(),
         favourite: false,
         active: true,
-        folderId: 3,
+        folderId: 1,
       ),
       ListEntity(
         name: 'Project Tasks',
@@ -76,32 +76,32 @@ class DatabaseHelpers {
         dateTimeCreated: DateTime.now(),
         favourite: true,
         active: true,
-        folderId: 3,
+        folderId: 1,
       ),
-      ListEntity(
-        name: 'Moving House',
-        completed: true,
-        dateTimeCreated: DateTime.now(),
-        favourite: false,
-        active: false,
-        folderId: 3,
-      ),
-      ListEntity(
-        name: 'Christmas Presents',
-        completed: false,
-        dateTimeCreated: DateTime.now(),
-        favourite: false,
-        active: false,
-        folderId: 3,
-      ),
-      ListEntity(
-        name: 'Project Tasks',
-        completed: false,
-        dateTimeCreated: DateTime.now(),
-        favourite: true,
-        active: false,
-        folderId: 3,
-      ),
+      // ListEntity(
+      //   name: 'Moving House',
+      //   completed: true,
+      //   dateTimeCreated: DateTime.now(),
+      //   favourite: false,
+      //   active: false,
+      //   folderId: 3,
+      // ),
+      // ListEntity(
+      //   name: 'Christmas Presents',
+      //   completed: false,
+      //   dateTimeCreated: DateTime.now(),
+      //   favourite: false,
+      //   active: false,
+      //   folderId: 3,
+      // ),
+      // ListEntity(
+      //   name: 'Project Tasks',
+      //   completed: false,
+      //   dateTimeCreated: DateTime.now(),
+      //   favourite: true,
+      //   active: false,
+      //   folderId: 3,
+      // ),
     ];
   }
 

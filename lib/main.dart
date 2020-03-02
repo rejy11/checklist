@@ -1,13 +1,13 @@
-import 'package:checklist/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import 'constants.dart';
 import 'container/injection_container.dart';
 import 'providers/folders_provider.dart';
 import 'providers/list_items_provider.dart';
 import 'providers/lists_provider.dart';
-import 'view/screens/folders_screen.dart';
+import 'view/screens/lists_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,14 +44,14 @@ class App extends StatelessWidget {
           colorScheme: colourScheme,
           brightness: Brightness.light,
           primaryColor: BACKGROUND_GRADIENT_START,
-          accentColor: Colors.amber[500],
+          accentColor: Color.fromARGB(255, 143, 109, 247),
           backgroundColor: colourScheme.background,
           errorColor: Colors.red[600],
           fontFamily: 'Comfortaa',
           primaryColorLight: Color.fromARGB(255, 117, 125, 232),
           disabledColor: Colors.white30,
         ),
-        home: FoldersScreen(),
+        home: ListsScreen(1, 'Your Lists'),
       ),
       providers: [
         ChangeNotifierProvider<FoldersProvider>(

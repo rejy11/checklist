@@ -1,9 +1,10 @@
-import 'package:checklist/models/list_item_model.dart';
-import 'package:checklist/providers/list_items_provider.dart';
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
+
+import '../../../models/list_item_model.dart';
+import '../../../providers/list_items_provider.dart';
 
 class ListItemWidget extends StatefulWidget {
   final ListItemModel listItem;
@@ -26,10 +27,6 @@ class _ListItemWidgetState extends State<ListItemWidget> {
       },
       background: Card(
         color: Colors.transparent,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
         margin: EdgeInsets.symmetric(vertical: 0),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

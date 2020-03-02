@@ -62,7 +62,7 @@ class _ListsListWidgetState extends State<ListsListWidget>
       child: CustomScrollView(
         slivers: <Widget>[
           SliverPersistentHeader(
-            delegate: MySliverPersistentHeader(50, 'Active Lists'),
+            delegate: ListsSliverHeader(50, 'Active Lists'),
             pinned: true,
           ),
           SliverList(
@@ -71,12 +71,13 @@ class _ListsListWidgetState extends State<ListsListWidget>
               return ListsListItemWidget(
                 list: activeLists[index],
                 onLongPress: onListItemLongPress,
-                onTap: () => _navigateToListItemScreen(activeLists[index].id, activeLists[index].name),
+                onTap: () => _navigateToListItemScreen(
+                    activeLists[index].id, activeLists[index].name),
               );
             }, childCount: activeLists.length),
           ),
           SliverPersistentHeader(
-            delegate: MySliverPersistentHeader(50, 'Inactive Lists'),
+            delegate: ListsSliverHeader(50, 'Inactive Lists'),
             pinned: true,
           ),
           SliverList(
@@ -85,7 +86,8 @@ class _ListsListWidgetState extends State<ListsListWidget>
               return ListsListItemWidget(
                 list: inactiveLists[index],
                 onLongPress: onListItemLongPress,
-                onTap: () => _navigateToListItemScreen(inactiveLists[index].id, inactiveLists[index].name),
+                onTap: () => _navigateToListItemScreen(
+                    inactiveLists[index].id, inactiveLists[index].name),
               );
             }, childCount: inactiveLists.length),
           ),
@@ -159,11 +161,11 @@ class _ListsListWidgetState extends State<ListsListWidget>
   }
 }
 
-class MySliverPersistentHeader implements SliverPersistentHeaderDelegate {
+class ListsSliverHeader implements SliverPersistentHeaderDelegate {
   final double height;
   final String title;
 
-  MySliverPersistentHeader(
+  ListsSliverHeader(
     this.height,
     this.title,
   );
@@ -175,14 +177,16 @@ class MySliverPersistentHeader implements SliverPersistentHeaderDelegate {
       builder: (context, constraints) {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 20),
-          //color: Theme.of(context).primaryColorLight,
           height: constraints.maxHeight,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
-                title, 
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white70),
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -207,5 +211,4 @@ class MySliverPersistentHeader implements SliverPersistentHeaderDelegate {
   @override
   // TODO: implement stretchConfiguration
   OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
-
 }

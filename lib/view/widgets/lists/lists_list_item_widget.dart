@@ -1,8 +1,10 @@
-import 'package:checklist/models/list_model.dart';
-import 'package:checklist/providers/lists_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import '../../../models/list_model.dart';
+import '../../../providers/lists_provider.dart';
 
 class ListsListItemWidget extends StatefulWidget {
   final ListModel list;
@@ -36,25 +38,17 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
 
   @override
   Widget build(BuildContext context) {
-    print('dd');
     return SlideTransition(
       position: _offset,
       child: Card(
+        color: Colors.white54,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(15),
-            bottomLeft: Radius.circular(15),
-            bottomRight: Radius.circular(15),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-        elevation: 1,
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+        elevation: 0,
         child: ClipRRect(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(15),
-            bottomLeft: Radius.circular(15),
-            bottomRight: Radius.circular(15),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(20)),
           child: InkWell(
             onTap: widget.onTap,
             onLongPress: widget.onLongPress,
@@ -65,23 +59,17 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
                       ? Theme.of(context).accentColor
                       : Colors.transparent,
                   height: 80,
-                  width: 7,
+                  width: 0,
                 ),
                 Container(
-                  width: 80,
-                  child: Consumer<ListsProvider>(
-                    builder: (context, value, child) {
-                      return CircleAvatar(
-                        child: Text(
-                          '${widget.list.numberOfItems}',
-                          style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        backgroundColor: Theme.of(context).accentColor,
-                      );
-                    },
-                  ),
+                  width: 60,
+                  child: widget.list.favourite
+                      ? Icon(
+                          MaterialCommunityIcons.star,
+                          color: Colors.yellowAccent[700],
+                          size: 35,
+                        )
+                      : Container(),
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
