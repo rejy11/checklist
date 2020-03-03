@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class TextFieldAndSubmitDialog extends StatefulWidget {
-  final Function onCompleted;
   final String inputHintText;
   final String text;
   final int maxLength;
+  final String negativeButtonText;
+  final String positiveButtonText;
+  final String title;
+  final Function negativeButtonOnPressed;
+  final Function positiveButtonOnPressed;
 
   const TextFieldAndSubmitDialog(
-    this.onCompleted,
-    this.inputHintText, {
+    this.inputHintText,
+    this.negativeButtonText,
+    this.positiveButtonText,
+    this.title, {
     this.text,
     this.maxLength,
+    this.negativeButtonOnPressed,
+    this.positiveButtonOnPressed,
   });
 
   @override
@@ -21,14 +28,14 @@ class TextFieldAndSubmitDialog extends StatefulWidget {
 
 class _TextFieldAndSubmitDialogState extends State<TextFieldAndSubmitDialog> {
   TextEditingController nameController = TextEditingController();
-  bool canOnCompletedByCalled = false;
+  bool canOnCompletedBeCalled = false;
 
   @override
   void initState() {
     nameController.text = widget.text;
     if (widget.text != null) {
       if (widget.text.isNotEmpty) {
-        canOnCompletedByCalled = true;
+        canOnCompletedBeCalled = true;
       }
     }
     super.initState();
@@ -44,60 +51,108 @@ class _TextFieldAndSubmitDialogState extends State<TextFieldAndSubmitDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(20),
       ),
+      elevation: 5,
       content: Container(
         width: 300,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
+            Text(
+              'Create List',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
             Row(
               children: <Widget>[
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10, right: 10),
-                    child: TextField(
-                      controller: nameController,
-                      autofocus: true,
-                      maxLength:
-                          widget.maxLength != null ? widget.maxLength : null,
-                      onChanged: (text) {
-                        if (text.isNotEmpty & !canOnCompletedByCalled) {
-                          setState(() {
-                            canOnCompletedByCalled = true;
-                          });
-                        }
-                        if (!text.isNotEmpty & canOnCompletedByCalled) {
-                          setState(() {
-                            canOnCompletedByCalled = false;
-                          });
-                        }
-                      },
-                      onSubmitted: (text) =>
-                          canOnCompletedByCalled = text.isNotEmpty,
-                      decoration: InputDecoration(
-                        hintText: widget.inputHintText,
+                  child: TextField(
+                    controller: nameController,
+                    autofocus: true,
+                    style: TextStyle(color: Theme.of(context).primaryColor),
+                    maxLength:
+                        widget.maxLength != null ? widget.maxLength : null,
+                    onChanged: (text) {
+                      if (text.isNotEmpty & !canOnCompletedBeCalled) {
+                        setState(() {
+                          canOnCompletedBeCalled = true;
+                        });
+                      }
+                      if (!text.isNotEmpty & canOnCompletedBeCalled) {
+                        setState(() {
+                          canOnCompletedBeCalled = false;
+                        });
+                      }
+                    },
+                    onSubmitted: (text) =>
+                        canOnCompletedBeCalled = text.isNotEmpty,
+                    decoration: InputDecoration(
+                      hintText: widget.inputHintText,
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Theme.of(context).accentColor),
                       ),
                     ),
                   ),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(
+                  child: FlatButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      widget.negativeButtonText,
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    textColor: Theme.of(context).accentColor,
+                    onPressed: widget.negativeButtonOnPressed,
+                  ),
                 ),
-                FloatingActionButton(
-                  onPressed: canOnCompletedByCalled
-                      ? () async {
-                          Navigator.pop(context);
-                          widget.onCompleted(nameController.text);
-                        }
-                      : null,
-                  mini: true,
-                  elevation: 0,
-                  child: Icon(
-                    Icons.check,
-                    color: canOnCompletedByCalled ? Colors.white : Colors.transparent,
+                Container(
+                  width: 6,
+                  height: 20,
+                  child: VerticalDivider(
+                    color: Colors.black12,
+                    thickness: 1,
+                    indent: 0,
+                    endIndent: 0,
+                  ),
+                ),
+                Expanded(
+                  child: FlatButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      widget.positiveButtonText,
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    textColor: Theme.of(context).accentColor,
+                    onPressed: canOnCompletedBeCalled
+                        ? () =>
+                            widget.positiveButtonOnPressed(nameController.text)
+                        : null,
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

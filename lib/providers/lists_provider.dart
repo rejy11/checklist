@@ -55,7 +55,7 @@ class ListsProvider extends ChangeNotifier {
       completed: false,
       favourite: false,
       dateTimeCreated: DateTime.now(),
-      active: false,
+      active: true,
       folderId: _currentFolderId,
     );
     await _listsRepository.insertList(newList);

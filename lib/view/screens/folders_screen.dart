@@ -71,11 +71,13 @@ class FoldersScreen extends StatelessWidget {
                             context: context,
                             builder: (ctx) {
                               return TextFieldAndSubmitDialog(
-                                (text) async =>
-                                    await Provider.of<FoldersProvider>(context,
-                                            listen: false)
-                                        .insertFolder(text),
+                                // (text) async =>
+                                //     await Provider.of<FoldersProvider>(context,
+                                //             listen: false)
+                                //         .insertFolder(text),
                                 'Folder Name',
+                                'Cancel',
+                                'Update','',
                                 maxLength: 15,
                               );
                             },

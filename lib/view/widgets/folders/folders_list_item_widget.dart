@@ -100,9 +100,11 @@ class _FoldersListItemWidgetState extends State<FoldersListItemWidget>
             showDialog(
               context: context,
               builder: (ctx) {
-                return TextFieldAndSubmitDialog(
-                  _updateFolder,
+                return TextFieldAndSubmitDialog(                  
                   'Folder Name',
+                  'Cancel',
+                  'Add',
+                  '',
                   text: widget.folder.name,
                   maxLength: 15,
                 );

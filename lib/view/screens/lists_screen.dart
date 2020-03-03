@@ -132,11 +132,19 @@ class _ListsScreenState extends State<ListsScreen>
       context: context,
       builder: (ctx) {
         return TextFieldAndSubmitDialog(
-          (text) async =>
-              await Provider.of<ListsProvider>(context, listen: false)
-                  .insertList(text),
-          'List Name',
+          'Name',
+          'Cancel',
+          'Add',
+          'New List',
           maxLength: 15,
+          negativeButtonOnPressed: () {
+            Navigator.of(context).pop();
+          },
+          positiveButtonOnPressed: (text) async {
+            Navigator.of(context).pop();
+            await Provider.of<ListsProvider>(context, listen: false)
+                .insertList(text);
+          },
         );
       },
     );
