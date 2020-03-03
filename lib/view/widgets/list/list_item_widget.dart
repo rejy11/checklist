@@ -25,28 +25,24 @@ class _ListItemWidgetState extends State<ListItemWidget> {
         Provider.of<ListItemsProvider>(context, listen: false)
             .deleteListItem(widget.listItem.id);
       },
-      background: Card(
-        color: Colors.transparent,
-        margin: EdgeInsets.symmetric(vertical: 0),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Icon(
-                MaterialCommunityIcons.delete_outline,
-                color: Theme.of(context).accentColor,
-              )
-            ],
-          ),
+      background: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Icon(
+              MaterialCommunityIcons.delete_outline,
+              color: Colors.white,
+            )
+          ],
         ),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: Card(
-          color: Colors.white30,
+          color: Colors.white54,
           elevation: 0,
-          margin: EdgeInsets.symmetric(vertical: 0),
+          margin: EdgeInsets.symmetric(vertical: 0, horizontal: 2),
           child: InkWell(
             onTap: () {},
             child: Padding(
@@ -58,11 +54,12 @@ class _ListItemWidgetState extends State<ListItemWidget> {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
                       widget.listItem.name,
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 16),
                     ),
                   ),
                   CircularCheckBox(
                     value: widget.listItem.completed,
+                    inactiveColor: Colors.black26,
                     onChanged: (value) {
                       widget.listItem.completed = value;
                       Provider.of<ListItemsProvider>(context, listen: false)

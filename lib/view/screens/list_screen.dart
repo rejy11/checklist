@@ -24,10 +24,9 @@ class ListScreen extends StatelessWidget {
         resizeToAvoidBottomInset: true,
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: Text(listName, style: TextStyle(fontWeight: FontWeight.bold)),
-        ),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: Text(listName)),
         body: Container(
           child: ListWidget(),
           decoration: BoxDecoration(

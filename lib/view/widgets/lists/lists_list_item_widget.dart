@@ -1,3 +1,4 @@
+import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:intl/intl.dart';
@@ -10,8 +11,12 @@ class ListsListItemWidget extends StatefulWidget {
   final ListModel list;
   final Function onLongPress;
   final Function onTap;
+  final bool selectListMode;
+  final bool selected;
 
-  const ListsListItemWidget({
+  const ListsListItemWidget(
+    this.selectListMode,
+    this.selected, {
     Key key,
     this.list,
     this.onLongPress,
@@ -45,13 +50,24 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 2),
         elevation: 0,
         child: ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(20)),
           child: InkWell(
-            onTap: widget.onTap,
-            onLongPress: widget.onLongPress,
+            onTap: () {
+              if (widget.selectListMode) {
+                Provider.of<ListsProvider>(context, listen: false)
+                    .toggleListSelected(widget.list.id);
+              } else {
+                widget.onTap();
+              }
+            },
+            onLongPress: () {
+              Provider.of<ListsProvider>(context, listen: false)
+                  .toggleListSelected(widget.list.id);
+              widget.onLongPress();
+            },
             child: Row(
               children: <Widget>[
                 Container(
@@ -61,16 +77,27 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
                   height: 80,
                   width: 0,
                 ),
-                Container(
-                  width: 60,
-                  child: widget.list.favourite
-                      ? Icon(
-                          MaterialCommunityIcons.star,
-                          color: Colors.yellowAccent[700],
-                          size: 35,
-                        )
-                      : Container(),
-                ),
+                widget.selectListMode
+                    ? Container(
+                        width: 80,
+                        child: CircularCheckBox(
+                            value: widget.selected,
+                            inactiveColor: Colors.black26,
+                            onChanged: (value) {
+                              Provider.of<ListsProvider>(context, listen: false)
+                                  .toggleListSelected(widget.list.id);
+                            }),
+                      )
+                    : Container(
+                        width: 80,
+                        child: widget.list.favourite
+                            ? Icon(
+                                MaterialCommunityIcons.star,
+                                color: Colors.yellowAccent[700],
+                                size: 35,
+                              )
+                            : Container(),
+                      ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,6 +111,7 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
                           widget.list.name,
                           style: TextStyle(
                             fontSize: 16,
+                            color: Theme.of(context).primaryColor,
                           ),
                           overflow: TextOverflow.fade,
                         ),
@@ -96,7 +124,10 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
                         opacity: 0.6,
                         child: Text(
                           '${DateFormat.yMMMd().format(widget.list.dateTimeCreated)}',
-                          style: TextStyle(fontSize: 12),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).primaryColor,
+                          ),
                         ),
                       ),
                     ),
@@ -106,23 +137,35 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Opacity(
-                    opacity: 0.3,
+                    opacity: widget.selectListMode ? 0.0 : 0.3,
                     child: PopupMenuButton(
+                      icon: Icon(
+                        MaterialCommunityIcons.dots_vertical,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      enabled: !widget.selectListMode,
                       itemBuilder: (context) {
                         final textStyle = TextStyle(fontSize: 14);
                         return [
                           widget.list.active
                               ? PopupMenuItem(
-                                  child: Text(
-                                    'Move to inactive',
-                                    style: textStyle,
-                                  ),
+                                  child: Text('Move to inactive',
+                                      style: textStyle),
                                   value: 1,
                                 )
                               : PopupMenuItem(
                                   child:
                                       Text('Move to active', style: textStyle),
                                   value: 2,
+                                ),
+                          widget.list.favourite
+                              ? PopupMenuItem(
+                                  child: Text('Unfavourite', style: textStyle),
+                                  value: 3,
+                                )
+                              : PopupMenuItem(
+                                  child: Text('Favourite', style: textStyle),
+                                  value: 4,
                                 ),
                         ];
                       },
@@ -131,6 +174,10 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
                           widget.list.active = false;
                         } else if (value == 2) {
                           widget.list.active = true;
+                        } else if (value == 3) {
+                          widget.list.favourite = false;
+                        } else if (value == 4) {
+                          widget.list.favourite = true;
                         }
                         Provider.of<ListsProvider>(context, listen: false)
                             .updateList(widget.list);

@@ -30,6 +30,7 @@ class App extends StatelessWidget {
     secondary: Colors.amber[500],
     surface: Colors.grey[100],
     onSurface: Colors.black,
+    
   );
 
   @override
@@ -41,15 +42,16 @@ class App extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Checklist',
         theme: ThemeData(
-          colorScheme: colourScheme,
           brightness: Brightness.light,
-          primaryColor: BACKGROUND_GRADIENT_START,
-          accentColor: Color.fromARGB(255, 143, 109, 247),
-          backgroundColor: colourScheme.background,
+          primaryColor: Colors.deepPurple[700],
+          accentColor: Colors.deepPurpleAccent[100],
+          iconTheme: IconThemeData(color: Colors.white),
+          appBarTheme: AppBarTheme(actionsIconTheme: Theme.of(context).iconTheme),
+          buttonTheme: ButtonThemeData(disabledColor: Colors.black26),
           errorColor: Colors.red[600],
           fontFamily: 'Comfortaa',
           primaryColorLight: Color.fromARGB(255, 117, 125, 232),
-          disabledColor: Colors.white30,
+          disabledColor: Colors.white38,
         ),
         home: ListsScreen(1, 'Your Lists'),
       ),

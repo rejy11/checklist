@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TextFieldAndSubmitDialog extends StatefulWidget {
   final Function onCompleted;
@@ -92,9 +93,7 @@ class _TextFieldAndSubmitDialogState extends State<TextFieldAndSubmitDialog> {
                   elevation: 0,
                   child: Icon(
                     Icons.check,
-                    color: canOnCompletedByCalled
-                        ? Theme.of(context).primaryColor
-                        : Colors.grey,
+                    color: canOnCompletedByCalled ? Colors.white : Colors.transparent,
                   ),
                 ),
               ],

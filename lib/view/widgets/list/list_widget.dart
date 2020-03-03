@@ -62,7 +62,7 @@ class _ListWidgetState extends State<ListWidget> {
                   child: Container(
                     padding: EdgeInsets.only(left: 25),
                     height: 60,
-                    color: Colors.white24,
+                    color: Colors.white30,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
@@ -71,10 +71,12 @@ class _ListWidgetState extends State<ListWidget> {
                             keyboardType: TextInputType.text,
                             controller: _nameController,
                             focusNode: _focusNode,
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Theme.of(context).primaryColor),
                             decoration: InputDecoration(
-                              hintText: 'New item',hintStyle: TextStyle(color: Colors.white60),
+                              hintText: 'New item',
+                              hintStyle: TextStyle(fontSize: 14),
                               border: InputBorder.none,
+                              
                             ),
                             onChanged: (_) {
                               setState(() {});
@@ -85,7 +87,7 @@ class _ListWidgetState extends State<ListWidget> {
                           child: Text(
                             'Add',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

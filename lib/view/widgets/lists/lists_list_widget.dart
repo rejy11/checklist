@@ -1,5 +1,6 @@
+import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/rendering/sliver_persistent_header.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/list_model.dart';
@@ -9,6 +10,10 @@ import '../core/action_panel_widget.dart';
 import 'lists_list_item_widget.dart';
 
 class ListsListWidget extends StatefulWidget {
+  final bool activeLists;
+
+  ListsListWidget(this.activeLists);
+
   @override
   _ListsListWidgetState createState() => _ListsListWidgetState();
 }
@@ -19,7 +24,9 @@ class _ListsListWidgetState extends State<ListsListWidget>
   double _actionPanelHeight = 50;
   double _actionPanelPosition;
   double _listViewPadding = 0;
-  Duration _actionPanelSlideDuration = Duration(milliseconds: 350);
+  double _actionPanelOpacity = 0.0;
+  Duration _actionPanelSlideDuration = Duration(milliseconds: 450);
+  Duration _actionPanelOpacityDuration = Duration(milliseconds: 500);
   bool _panelVisible = false;
 
   @override
@@ -32,6 +39,7 @@ class _ListsListWidgetState extends State<ListsListWidget>
   Widget build(BuildContext context) {
     _provider = Provider.of<ListsProvider>(context, listen: true);
     final lists = _provider.lists;
+
     return WillPopScope(
       onWillPop: () {
         return Future.delayed(const Duration(microseconds: 0), () {
@@ -45,53 +53,31 @@ class _ListsListWidgetState extends State<ListsListWidget>
               ? Center(
                   child: CircularProgressIndicator(),
                 )
-              : _buildListViewContainer(lists),
+              : _buildListViewContainer(
+                  lists.where((l) => l.active == widget.activeLists).toList(),
+                  _provider.selectListMode,
+                )
         ],
       ),
     );
   }
 
-  Widget _buildListViewContainer(List<ListModel> lists) {
-    final activeLists = lists.where((l) => l.active).toList();
-    final inactiveLists = lists.where((l) => !l.active).toList();
-
+  Widget _buildListViewContainer(List<ListModel> lists, bool selectListMode) {
     return AnimatedContainer(
       duration: _actionPanelSlideDuration,
       curve: Curves.easeOutCubic,
       padding: EdgeInsets.only(top: _listViewPadding),
-      child: CustomScrollView(
-        slivers: <Widget>[
-          SliverPersistentHeader(
-            delegate: ListsSliverHeader(50, 'Active Lists'),
-            pinned: true,
-          ),
-          SliverList(
-            delegate:
-                SliverChildBuilderDelegate((BuildContext context, int index) {
-              return ListsListItemWidget(
-                list: activeLists[index],
-                onLongPress: onListItemLongPress,
-                onTap: () => _navigateToListItemScreen(
-                    activeLists[index].id, activeLists[index].name),
-              );
-            }, childCount: activeLists.length),
-          ),
-          SliverPersistentHeader(
-            delegate: ListsSliverHeader(50, 'Inactive Lists'),
-            pinned: true,
-          ),
-          SliverList(
-            delegate:
-                SliverChildBuilderDelegate((BuildContext context, int index) {
-              return ListsListItemWidget(
-                list: inactiveLists[index],
-                onLongPress: onListItemLongPress,
-                onTap: () => _navigateToListItemScreen(
-                    inactiveLists[index].id, inactiveLists[index].name),
-              );
-            }, childCount: inactiveLists.length),
-          ),
-        ],
+      child: ListView.builder(
+        itemCount: lists.length,
+        itemBuilder: (context, i) {
+          return ListsListItemWidget(
+            selectListMode,
+            _provider.isSelected(lists[i].id),
+            list: lists[i],
+            onLongPress: onListItemLongPress,
+            onTap: () => _navigateToListItemScreen(lists[i].id, lists[i].name),
+          );
+        },
       ),
     );
   }
@@ -101,16 +87,61 @@ class _ListsListWidgetState extends State<ListsListWidget>
       _actionPanelPosition,
       _actionPanelSlideDuration,
       _actionPanelHeight,
+      _actionPanelOpacity,
+      _actionPanelOpacityDuration,
+      contentLeft: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 17),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            CircularCheckBox(
+              value: _provider.allListsSelected(),
+              inactiveColor: Colors.black26,
+              onChanged: (value) {
+                _provider.toggleAllListsSelected(value);
+              },
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            Text(
+              'All',
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+      contentRight: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 17),
+        child: Row(
+          children: <Widget>[
+            IconButton(
+              icon: Icon(MaterialCommunityIcons.delete_outline),
+              disabledColor: Theme.of(context).disabledColor,
+              onPressed: _provider.atleastOneListSelected()
+                  ? () async => await _provider.deleteSelectedLists()
+                  : null,
+            ),
+            IconButton(
+            icon: Icon(MaterialCommunityIcons.chevron_up),
+            color: Colors.white,
+            onPressed: _hidePanel,
+          ),
+          ],
+        ),
+      ),
     );
   }
 
   void onListItemLongPress() {
+    _provider.toggleSelectListMode(true);
     _showPanel();
   }
 
   void _showPanel() {
     setState(() {
       _actionPanelPosition = 0;
+      _actionPanelOpacity = 1.0;
       _listViewPadding = _actionPanelHeight;
       _panelVisible = true;
     });
@@ -119,9 +150,11 @@ class _ListsListWidgetState extends State<ListsListWidget>
   void _hidePanel() {
     setState(() {
       _actionPanelPosition = _actionPanelHeight * -1;
+      _actionPanelOpacity = 0.0;
       _listViewPadding = 0;
       _panelVisible = false;
     });
+    _provider.toggleSelectListMode(false);
   }
 
   bool _onBackPressed() {
@@ -159,56 +192,4 @@ class _ListsListWidgetState extends State<ListsListWidget>
     );
     Navigator.of(context).push(pageRouteBuilder);
   }
-}
-
-class ListsSliverHeader implements SliverPersistentHeaderDelegate {
-  final double height;
-  final String title;
-
-  ListsSliverHeader(
-    this.height,
-    this.title,
-  );
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          height: constraints.maxHeight,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  @override
-  double get maxExtent => height;
-
-  @override
-  double get minExtent => height;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
-
-  @override
-  // TODO: implement snapConfiguration
-  FloatingHeaderSnapConfiguration get snapConfiguration => null;
-
-  @override
-  // TODO: implement stretchConfiguration
-  OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
 }

@@ -1,6 +1,7 @@
-import 'package:checklist/entities/list_entity.dart';
-import 'package:checklist/models/list_model.dart';
 import 'package:flutter/foundation.dart';
+
+import '../entities/list_entity.dart';
+import '../models/list_model.dart';
 import '../repository/lists_repository.dart';
 
 class ListsProvider extends ChangeNotifier {
@@ -8,6 +9,8 @@ class ListsProvider extends ChangeNotifier {
 
   List<ListModel> _lists;
   int _currentFolderId;
+  bool selectListMode = false;
+  List<int> _selectedLists = List<int>();
 
   ListsProvider(
     this._listsRepository,
@@ -64,8 +67,47 @@ class ListsProvider extends ChangeNotifier {
     await fetchLists();
   }
 
-  Future deleteList(int id) async {
-    await _listsRepository.deleteList(id);
+  Future deleteSelectedLists() async {
+    _selectedLists.forEach((l) async => _listsRepository.deleteList(l));
+    _selectedLists.clear();
     await fetchLists();
+  }
+
+  void toggleSelectListMode(bool selectListMode) {
+    this.selectListMode = selectListMode;
+    if (!selectListMode) {
+      _selectedLists.clear();
+    }
+    notifyListeners();
+  }
+
+  void toggleListSelected(int listId) {
+    if (_selectedLists.contains(listId)) {
+      _selectedLists.remove(listId);
+    } else {
+      _selectedLists.add(listId);
+    }
+    notifyListeners();
+  }
+
+  void toggleAllListsSelected(bool value) {
+    _selectedLists.clear();
+    if (value) {
+      _selectedLists.addAll(_lists.map((l) => l.id));
+    }
+    notifyListeners();
+  }
+
+  bool isSelected(int listId) {
+    return _selectedLists.contains(listId);
+  }
+
+  bool atleastOneListSelected() {
+    return _selectedLists.length > 0;
+  }
+
+  bool allListsSelected() {
+    if (_selectedLists == null || _lists == null) return false;
+    return _selectedLists.length == _lists.length;
   }
 }
