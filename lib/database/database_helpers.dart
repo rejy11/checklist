@@ -33,7 +33,7 @@ class DatabaseHelpers {
       ListEntity(
         name: 'Weekly shop',
         completed: true,
-        dateTimeCreated: DateTime.now(),
+        dateTimeCreated: DateTime.now().subtract(Duration(days: 7)),
         favourite: true,
         active: true,
         folderId: 1,
@@ -41,7 +41,7 @@ class DatabaseHelpers {
       ListEntity(
         name: 'Holiday',
         completed: true,
-        dateTimeCreated: DateTime.now(),
+        dateTimeCreated: DateTime.now().subtract(Duration(days: 1)),
         favourite: false,
         active: true,
         folderId: 1,
@@ -49,23 +49,23 @@ class DatabaseHelpers {
       ListEntity(
         name: 'Home DIY',
         completed: false,
-        dateTimeCreated: DateTime.now(),
+        dateTimeCreated: DateTime.now().subtract(Duration(days: 1)),
         favourite: false,
-        active: true,
+        active: false,
         folderId: 1,
       ),
       ListEntity(
         name: 'Moving House',
         completed: true,
-        dateTimeCreated: DateTime.now(),
+        dateTimeCreated: DateTime.now().subtract(Duration(days: 12)),
         favourite: false,
-        active: true,
+        active: false,
         folderId: 1,
       ),
       ListEntity(
         name: 'Christmas Presents',
         completed: false,
-        dateTimeCreated: DateTime.now(),
+        dateTimeCreated: DateTime.now().subtract(Duration(days: 90)),
         favourite: false,
         active: true,
         folderId: 1,
@@ -73,35 +73,11 @@ class DatabaseHelpers {
       ListEntity(
         name: 'Project Tasks',
         completed: false,
-        dateTimeCreated: DateTime.now(),
+        dateTimeCreated: DateTime.now().subtract(Duration(days: 10)),
         favourite: true,
         active: true,
         folderId: 1,
       ),
-      // ListEntity(
-      //   name: 'Moving House',
-      //   completed: true,
-      //   dateTimeCreated: DateTime.now(),
-      //   favourite: false,
-      //   active: false,
-      //   folderId: 3,
-      // ),
-      // ListEntity(
-      //   name: 'Christmas Presents',
-      //   completed: false,
-      //   dateTimeCreated: DateTime.now(),
-      //   favourite: false,
-      //   active: false,
-      //   folderId: 3,
-      // ),
-      // ListEntity(
-      //   name: 'Project Tasks',
-      //   completed: false,
-      //   dateTimeCreated: DateTime.now(),
-      //   favourite: true,
-      //   active: false,
-      //   folderId: 3,
-      // ),
     ];
   }
 

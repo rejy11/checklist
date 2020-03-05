@@ -58,14 +58,14 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
             onTap: () {
               if (widget.selectListMode) {
                 Provider.of<ListsProvider>(context, listen: false)
-                    .toggleListSelected(widget.list.id);
+                    .toggleListSelected(widget.list);
               } else {
                 widget.onTap();
               }
             },
             onLongPress: () {
               Provider.of<ListsProvider>(context, listen: false)
-                  .toggleListSelected(widget.list.id);
+                  .toggleListSelected(widget.list);
               widget.onLongPress();
             },
             child: Row(
@@ -85,7 +85,7 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
                             inactiveColor: Colors.black26,
                             onChanged: (value) {
                               Provider.of<ListsProvider>(context, listen: false)
-                                  .toggleListSelected(widget.list.id);
+                                  .toggleListSelected(widget.list);
                             }),
                       )
                     : Container(

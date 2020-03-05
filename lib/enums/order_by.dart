@@ -1,0 +1,4 @@
+enum OrderBy {
+  Ascending,
+  Descending,
+}

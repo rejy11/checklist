@@ -1,19 +1,27 @@
+import 'package:checklist/repository/user_settings_repository.dart';
 import 'package:flutter/foundation.dart';
 
+import '../enums/lists_sort.dart';
+import '../enums/order_by.dart';
 import '../entities/list_entity.dart';
 import '../models/list_model.dart';
 import '../repository/lists_repository.dart';
 
 class ListsProvider extends ChangeNotifier {
   ListsRepository _listsRepository;
+  UserSettingsRepository _userSettingsRepository;
 
   List<ListModel> _lists;
+  List<ListModel> _selectedLists = List<ListModel>();
   int _currentFolderId;
   bool selectListMode = false;
-  List<int> _selectedLists = List<int>();
+  ListsSort _sortBy;
+  OrderBy _orderBy;
+  bool _isFavouritesPinned;
 
   ListsProvider(
     this._listsRepository,
+    this._userSettingsRepository,
   );
 
   List<ListModel> get lists {
@@ -22,6 +30,7 @@ class ListsProvider extends ChangeNotifier {
 
   void loadListsForFolder(int folderId) async {
     _currentFolderId = folderId;
+    await getUserSettingsForScreen();
     await fetchLists();
   }
 
@@ -44,7 +53,80 @@ class ListsProvider extends ChangeNotifier {
       listModels.add(listModel);
     }
     _lists = listModels;
+    applySortOrder(_lists);
     notifyListeners();
+  }
+
+  Future getUserSettingsForScreen() async {
+    _sortBy = await _userSettingsRepository.getListsSortBySetting();
+    _orderBy = await _userSettingsRepository.getListsOrderBySetting();
+    _isFavouritesPinned =
+        await _userSettingsRepository.getListsFavouritesPinnedSetting();
+  }
+
+  Future setUserSettingsForScreen(ListsSort sort, OrderBy order) async {
+    await _userSettingsRepository.setListsSortBy(sort);
+    await _userSettingsRepository.setListsOrderBy(order);
+    await getUserSettingsForScreen();
+    await fetchLists();
+  }
+
+  ListsSort get sortBy {
+    return _sortBy;
+  }
+
+  OrderBy get orderBy {
+    return _orderBy;
+  }
+
+  bool get isFavouritesPinned {
+    return _isFavouritesPinned;
+  }
+
+  void applySortOrder(List<ListModel> lists) {
+    if (_sortBy != null && _orderBy != null) {
+      Function compare;
+      if (isFavouritesPinned) {
+
+      } else {}
+
+      final favouriteLists = lists.where((l) => l.favourite).toList();
+      final standardLists = lists.where((l) => !l.favourite).toList();
+      switch (_sortBy) {
+        case ListsSort.DateCreated:
+          if (_orderBy == OrderBy.Ascending) {
+
+            favouriteLists
+                .sort((a, b) => a.dateTimeCreated.compareTo(b.dateTimeCreated));
+            standardLists
+                .sort((a, b) => a.dateTimeCreated.compareTo(b.dateTimeCreated));
+            lists.clear();
+            lists.addAll(favouriteLists);
+            lists.addAll(standardLists);
+          } else {
+            favouriteLists
+                .sort((a, b) => b.dateTimeCreated.compareTo(a.dateTimeCreated));
+            standardLists
+                .sort((a, b) => b.dateTimeCreated.compareTo(a.dateTimeCreated));
+            lists.clear();
+            lists.addAll(favouriteLists);
+            lists.addAll(standardLists);
+          }
+          break;
+        default:
+      }
+    }
+  }
+
+  List<ListModel> _getSortedList(List<ListModel> list, Function compareFunc) {
+    list.sort(compareFunc);
+    return list;
+  }
+
+  Future setIsFavouritesPinnedSetting(bool value) async {
+    await _userSettingsRepository.setListsFavouritePinnedSetting(value);
+    await getUserSettingsForScreen();
+    await fetchLists();
   }
 
   Future insertList(String text) async {
@@ -68,7 +150,7 @@ class ListsProvider extends ChangeNotifier {
   }
 
   Future deleteSelectedLists() async {
-    _selectedLists.forEach((l) async => _listsRepository.deleteList(l));
+    _selectedLists.forEach((l) async => _listsRepository.deleteList(l.id));
     _selectedLists.clear();
     await fetchLists();
   }
@@ -81,33 +163,34 @@ class ListsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleListSelected(int listId) {
-    if (_selectedLists.contains(listId)) {
-      _selectedLists.remove(listId);
+  void toggleListSelected(ListModel list) {
+    if (_selectedLists.contains(list)) {
+      _selectedLists.remove(list);
     } else {
-      _selectedLists.add(listId);
+      _selectedLists.add(list);
     }
     notifyListeners();
   }
 
-  void toggleAllListsSelected(bool value) {
+  void toggleAllListsSelected(bool value, bool activeLists) {
     _selectedLists.clear();
     if (value) {
-      _selectedLists.addAll(_lists.map((l) => l.id));
+      _selectedLists.addAll(_lists.where((l) => l.active == activeLists));
     }
     notifyListeners();
   }
 
-  bool isSelected(int listId) {
-    return _selectedLists.contains(listId);
+  bool isSelected(ListModel list) {
+    return _selectedLists.contains(list);
   }
 
-  bool atleastOneListSelected() {
-    return _selectedLists.length > 0;
+  bool atleastOneListSelected(bool activeLists) {
+    return _selectedLists.where((l) => l.active == activeLists).length > 0;
   }
 
-  bool allListsSelected() {
+  bool allListsSelected(bool activeLists) {
     if (_selectedLists == null || _lists == null) return false;
-    return _selectedLists.length == _lists.length;
+    return _selectedLists.where((l) => l.active == activeLists).length ==
+        _lists.where((l) => l.active == activeLists).length;
   }
 }

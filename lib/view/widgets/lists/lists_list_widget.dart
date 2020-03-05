@@ -1,8 +1,10 @@
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../../constants.dart' as Constants;
 import '../../../models/list_model.dart';
 import '../../../providers/lists_provider.dart';
 import '../../screens/list_screen.dart';
@@ -75,7 +77,7 @@ class _ListsListWidgetState extends State<ListsListWidget>
         itemBuilder: (context, i) {
           return ListsListItemWidget(
             selectListMode,
-            _provider.isSelected(lists[i].id),
+            _provider.isSelected(lists[i]),
             list: lists[i],
             onLongPress: onListItemLongPress,
             onTap: () => _navigateToListItemScreen(lists[i].id, lists[i].name),
@@ -98,10 +100,10 @@ class _ListsListWidgetState extends State<ListsListWidget>
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CircularCheckBox(
-              value: _provider.allListsSelected(),
+              value: _provider.allListsSelected(widget.activeLists),
               inactiveColor: Colors.black26,
               onChanged: (value) {
-                _provider.toggleAllListsSelected(value);
+                _provider.toggleAllListsSelected(value, widget.activeLists);
               },
             ),
             SizedBox(
@@ -121,17 +123,21 @@ class _ListsListWidgetState extends State<ListsListWidget>
             IconButton(
               icon: Icon(MaterialCommunityIcons.delete_outline),
               disabledColor: Theme.of(context).disabledColor,
-              onPressed: _provider.atleastOneListSelected()
+              onPressed: _provider.atleastOneListSelected(widget.activeLists)
                   ? () async {
                       await _showDeleteListsDialog();
                       _hidePanel();
+                      _provider.toggleSelectListMode(false);
                     }
                   : null,
             ),
             IconButton(
               icon: Icon(MaterialCommunityIcons.chevron_up),
               color: Colors.white,
-              onPressed: _hidePanel,
+              onPressed: () {
+                _hidePanel();
+                _provider.toggleSelectListMode(false);
+              },
             ),
           ],
         ),
@@ -140,82 +146,86 @@ class _ListsListWidgetState extends State<ListsListWidget>
   }
 
   _showDeleteListsDialog() async {
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: Colors.transparent));
     await showDialog(
-        context: context,
-        builder: (ctx) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            elevation: 5,
-            content: Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text(
-                    'Delete selected lists?',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
+            context: context,
+            builder: (ctx) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                elevation: 5,
+                content: Container(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Expanded(
-                        child: FlatButton(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            'No',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          textColor: Theme.of(context).accentColor,
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
+                      Text(
+                        'Delete selected lists?',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Container(
-                        width: 6,
+                      SizedBox(
                         height: 20,
-                        child: VerticalDivider(
-                          color: Colors.black12,
-                          thickness: 1,
-                          indent: 0,
-                          endIndent: 0,
-                        ),
                       ),
-                      Expanded(
-                        child: FlatButton(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Expanded(
+                            child: FlatButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                'No',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              textColor: Theme.of(context).accentColor,
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
                           ),
-                          child: Text(
-                            'Yes',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                          Container(
+                            width: 6,
+                            height: 20,
+                            child: VerticalDivider(
+                              color: Colors.black12,
+                              thickness: 1,
+                              indent: 0,
+                              endIndent: 0,
+                            ),
                           ),
-                          textColor: Theme.of(context).accentColor,
-                          onPressed: () async {
-                            await _provider.deleteSelectedLists();
-                            Navigator.of(context).pop();
-                          },
-                        ),
+                          Expanded(
+                            child: FlatButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                'Yes',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              textColor: Theme.of(context).accentColor,
+                              onPressed: () async {
+                                await _provider.deleteSelectedLists();
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-          );
-        });
+                ),
+              );
+            })
+        .then((_) => SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+            statusBarColor: Constants.BACKGROUND_GRADIENT_START)));
   }
 
   void onListItemLongPress() {
@@ -239,12 +249,13 @@ class _ListsListWidgetState extends State<ListsListWidget>
       _listViewPadding = 0;
       _panelVisible = false;
     });
-    _provider.toggleSelectListMode(false);
+    // _provider.toggleSelectListMode(false);
   }
 
   bool _onBackPressed() {
     if (_panelVisible) {
       _hidePanel();
+      _provider.toggleSelectListMode(false);
       return false;
     } else {
       return true;

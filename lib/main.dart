@@ -65,6 +65,7 @@ class App extends StatelessWidget {
         ChangeNotifierProvider<ListsProvider>(
           create: (ctx) => ListsProvider(
             serviceLocator(),
+            serviceLocator(),
           ),
         ),
         ChangeNotifierProvider<ListItemsProvider>(
