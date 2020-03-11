@@ -80,7 +80,7 @@ class _TextFieldAndSubmitDialogState extends State<TextFieldAndSubmitDialog> {
                   child: TextField(
                     controller: nameController,
                     autofocus: true,
-                    style: TextStyle(color: Theme.of(context).primaryColor),
+                    // style: TextStyle(color: Theme.of(context).primaryColor),
                     maxLength:
                         widget.maxLength != null ? widget.maxLength : null,
                     onChanged: (text) {
@@ -101,7 +101,7 @@ class _TextFieldAndSubmitDialogState extends State<TextFieldAndSubmitDialog> {
                       hintText: widget.inputHintText,
                       focusedBorder: UnderlineInputBorder(
                         borderSide:
-                            BorderSide(color: Theme.of(context).accentColor),
+                            BorderSide(color: Theme.of(context).primaryColor),
                       ),
                     ),
                   ),

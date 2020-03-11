@@ -85,42 +85,33 @@ class ListsProvider extends ChangeNotifier {
 
   void applySortOrder(List<ListModel> lists) {
     if (_sortBy != null && _orderBy != null) {
-      Function compare;
-      if (isFavouritesPinned) {
+      int Function(ListModel, ListModel) compare;
 
-      } else {}
-
-      final favouriteLists = lists.where((l) => l.favourite).toList();
-      final standardLists = lists.where((l) => !l.favourite).toList();
       switch (_sortBy) {
         case ListsSort.DateCreated:
           if (_orderBy == OrderBy.Ascending) {
-
-            favouriteLists
-                .sort((a, b) => a.dateTimeCreated.compareTo(b.dateTimeCreated));
-            standardLists
-                .sort((a, b) => a.dateTimeCreated.compareTo(b.dateTimeCreated));
-            lists.clear();
-            lists.addAll(favouriteLists);
-            lists.addAll(standardLists);
+            compare = (ListModel a, ListModel b) =>
+                a.dateTimeCreated.compareTo(b.dateTimeCreated);
           } else {
-            favouriteLists
-                .sort((a, b) => b.dateTimeCreated.compareTo(a.dateTimeCreated));
-            standardLists
-                .sort((a, b) => b.dateTimeCreated.compareTo(a.dateTimeCreated));
-            lists.clear();
-            lists.addAll(favouriteLists);
-            lists.addAll(standardLists);
+            compare = (ListModel a, ListModel b) =>
+                b.dateTimeCreated.compareTo(a.dateTimeCreated);
           }
           break;
         default:
       }
-    }
-  }
 
-  List<ListModel> _getSortedList(List<ListModel> list, Function compareFunc) {
-    list.sort(compareFunc);
-    return list;
+      if (isFavouritesPinned) {
+        final favouriteLists =
+            _getSortedList(lists.where((l) => l.favourite).toList(), compare);
+        final standardLists =
+            _getSortedList(lists.where((l) => !l.favourite).toList(), compare);
+        _lists.clear();
+        _lists.addAll(favouriteLists);
+        _lists.addAll(standardLists);
+      } else {
+        _lists.sort(compare);
+      }
+    }
   }
 
   Future setIsFavouritesPinnedSetting(bool value) async {
@@ -192,5 +183,11 @@ class ListsProvider extends ChangeNotifier {
     if (_selectedLists == null || _lists == null) return false;
     return _selectedLists.where((l) => l.active == activeLists).length ==
         _lists.where((l) => l.active == activeLists).length;
+  }
+
+  List<ListModel> _getSortedList(
+      List<ListModel> list, int Function(ListModel, ListModel) compareFunc) {
+    list.sort(compareFunc);
+    return list;
   }
 }

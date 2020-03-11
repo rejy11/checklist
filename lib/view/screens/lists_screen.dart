@@ -53,8 +53,8 @@ class _ListsScreenState extends State<ListsScreen>
           title: Text(
             widget.folderName,
             style: TextStyle(
-                // color: Theme.of(context).accentColor,
-                ),
+              color: Colors.white,
+            ),
           ),
           centerTitle: true,
           actions: _buildAppBarActions(),
