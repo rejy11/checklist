@@ -1,7 +1,7 @@
-import 'package:checklist/entities/list_item_entity.dart';
-
 import '../entities/folder_entity.dart';
 import '../entities/list_entity.dart';
+import '../entities/list_item_entity.dart';
+import '../entities/list_reminder_entity.dart';
 
 extension FolderConversion on FolderEntity {
   Map<String, dynamic> toMap() {
@@ -34,6 +34,18 @@ extension ListItemConversion on ListItemEntity {
       'id': this.id,
       'name': this.name,
       'completed': this.completed,
+      'listId': this.listId,
+    };
+  }
+}
+
+extension ListReminderConversion on ListReminderEntity {
+  Map<String, dynamic> toMap() {
+    return {
+      'id': this.id,
+      'reminderDateTime': this.reminderDateTime,
+      'hasSound': this.hasSound,
+      'repeatReminder': this.repeatReminder,
       'listId': this.listId,
     };
   }

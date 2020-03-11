@@ -6,6 +6,7 @@ import './database_helpers.dart';
 import '../entities/folder_entity.dart';
 import '../entities/list_entity.dart';
 import '../entities/list_item_entity.dart';
+import '../entities/list_reminder_entity.dart';
 import '../enums/folders_order_by.dart';
 import 'entity_map_converter.dart';
 
@@ -45,6 +46,9 @@ class LocalDatabase {
           'CREATE TABLE ListItem(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT(15), completed INTEGER,'
           'listId INTEGER, FOREIGN KEY(listId) REFERENCES List(id) ON DELETE CASCADE)',
         );
+        await db.execute(
+            'CREATE TABLE ListReminder(id INTEGER PRIMARY KEY AUTOINCREMENT, reminderDateTime TEXT,'
+            'hasSound INTEGER, repeatReminder INTEGER, listId INTEGER, FOREIGN KEY(listId) REFERENCES List(id) ON DELETE CASCADE)');
 
         final folders = DatabaseHelpers.generateFolderTestData();
         for (var folder in folders) {
@@ -234,5 +238,39 @@ class LocalDatabase {
   Future deleteListItem(int id) async {
     final db = await database;
     await db.delete('ListItem', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // LIST REMINDERS ---------------------------------------------------------------------
+
+  Future<ListReminderEntity> getListReminder(int listId) async {
+    final db = await database;
+
+    final reminder = await db.query(
+      'ListReminder',
+      where: 'listId = ?',
+      whereArgs: [listId],
+      limit: 1,
+    );
+    if (reminder != null && reminder.length == 1) {
+      return ListReminderEntity(
+        id: reminder[0]['id'],
+        reminderDateTime: DateTime.parse(reminder[0]['reminderDateTime']),
+        repeatReminder:
+            DatabaseHelpers.intToBoolConverter(reminder[0]['repeatReminder']),
+        hasSound: DatabaseHelpers.intToBoolConverter(reminder[0]['hasSound']),
+        listId: reminder[0]['listId'],
+      );
+    }
+    return null;
+  }
+
+  Future insertListReminder(ListReminderEntity reminder) async {
+    final db = await database;
+    await db.insert('ListReminder', reminder.toMap());
+  }
+
+  Future deleteListReminder(int reminderId) async {
+    final db = await database;
+    await db.delete('ListReminder', where: 'id = ?', whereArgs: [reminderId]);
   }
 }

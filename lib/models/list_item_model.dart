@@ -1,6 +1,7 @@
 import 'package:checklist/entities/list_item_entity.dart';
+import 'model_base.dart';
 
-class ListItemModel {
+class ListItemModel extends ModelBase<ListItemEntity> {
   int id;
   String name;
   bool completed;

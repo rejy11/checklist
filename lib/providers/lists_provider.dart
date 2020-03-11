@@ -5,6 +5,7 @@ import '../enums/lists_sort.dart';
 import '../enums/order_by.dart';
 import '../entities/list_entity.dart';
 import '../models/list_model.dart';
+import '../models/list_reminder_model.dart';
 import '../repository/lists_repository.dart';
 
 class ListsProvider extends ChangeNotifier {
@@ -50,6 +51,16 @@ class ListsProvider extends ChangeNotifier {
         numberOfItems: await _listsRepository.getNumberOfItemsInList(list.id),
         folderId: list.folderId,
       );
+      final reminder = await _listsRepository.getReminder(list.id); // get reminder
+      if(reminder != null) { // if reminder is not null
+        listModel.reminder = ListReminderModel(
+          id: reminder.id,
+          reminderDateTime: reminder.reminderDateTime,
+          repeatReminder: reminder.repeatReminder,
+          hasSound: reminder.hasSound,
+          listId: reminder.listId,
+        );
+      }
       listModels.add(listModel);
     }
     _lists = listModels;
@@ -190,4 +201,6 @@ class ListsProvider extends ChangeNotifier {
     list.sort(compareFunc);
     return list;
   }
+
+
 }

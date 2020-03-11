@@ -1,6 +1,8 @@
 import '../entities/list_entity.dart';
+import '../models/model_base.dart';
+import '../models/list_reminder_model.dart';
 
-class ListModel {
+class ListModel extends ModelBase<ListEntity> {
   int id;
   String name;
   bool completed;
@@ -9,6 +11,7 @@ class ListModel {
   DateTime dateTimeCreated;
   int numberOfItems;
   int folderId;
+  ListReminderModel reminder;
 
   ListModel({
     this.id,
@@ -19,8 +22,10 @@ class ListModel {
     this.dateTimeCreated,
     this.numberOfItems,
     this.folderId,
+    this.reminder,
   });
 
+  @override
   ListEntity toEntity() {
     return ListEntity(
       id: id,

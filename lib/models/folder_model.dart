@@ -1,6 +1,7 @@
 import '../entities/folder_entity.dart';
+import 'model_base.dart';
 
-class FolderModel {
+class FolderModel extends ModelBase<FolderEntity> {
   int id;
   String name;
   DateTime dateTimeCreated;
