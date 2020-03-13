@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'constants.dart' as Constants;
 import 'container/injection_container.dart';
+import 'helpers/app_theme_helper.dart';
 import 'providers/folders_provider.dart';
 import 'providers/list_items_provider.dart';
 import 'providers/lists_provider.dart';
@@ -54,7 +55,8 @@ class _AppState extends State<App> {
     widget.localNotificationService.configureSelectNotificationSubject(
       (int listId) => Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ListScreen(listId, 'Your Listssss')),
+        MaterialPageRoute(
+            builder: (context) => ListScreen(listId, 'Your Listssss')),
       ),
     );
     // _configureSelectNotificationSubject();
@@ -68,8 +70,11 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Constants.BACKGROUND_GRADIENT_START));
+    AppThemeHelper.applyStatusBarTheme(
+      context,
+      statusBarColour: Constants.BACKGROUND_GRADIENT_START,
+    );
+
     return MultiProvider(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -77,15 +82,18 @@ class _AppState extends State<App> {
         theme: ThemeData(
           brightness: Brightness.light,
           primaryColor: Constants.BACKGROUND_GRADIENT_START,
-          accentColor: Color.fromARGB(255, 255, 175, 160),
+          // accentColor: Color.fromARGB(255, 255, 175, 160),
+          accentColor: Colors.red[200],
           iconTheme: IconThemeData(color: Colors.black54),
-          appBarTheme:
-              AppBarTheme(actionsIconTheme: Theme.of(context).iconTheme, textTheme: TextTheme()),
+          appBarTheme: AppBarTheme(
+              actionsIconTheme: Theme.of(context).iconTheme,
+              textTheme: TextTheme()),
           buttonTheme: ButtonThemeData(disabledColor: Colors.black26),
           errorColor: Colors.red[600],
           fontFamily: 'Comfortaa',
           primaryColorLight: Color.fromARGB(255, 117, 125, 232),
           disabledColor: Colors.black26,
+          
         ),
         home: ListsScreen(1, 'Your Lists'),
       ),

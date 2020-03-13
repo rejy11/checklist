@@ -1,9 +1,10 @@
-import 'package:checklist/models/list_model.dart';
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 import 'package:intl/intl.dart';
 
-import '../../constants.dart' as Constants;
+import '../../helpers/app_theme_helper.dart';
+import '../../models/list_model.dart';
 
 enum RepeatReminder {
   Never,
@@ -57,7 +58,7 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Text('Set Reminder', style: TextStyle(color: Colors.white),),
+          title: Text('Set Reminder'),
           iconTheme: Theme.of(context).iconTheme,
           centerTitle: true,
         ),
@@ -71,15 +72,17 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
             ),
           ),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Constants.BACKGROUND_GRADIENT_START,
-                Constants.BACKGROUND_GRADIENT_END,
-              ],
-            ),
-          ),
+              image: DecorationImage(
+                  image: AssetImage('assets/background.jpg'), fit: BoxFit.none)
+              // gradient: LinearGradient(
+              //   begin: Alignment.topCenter,
+              //   end: Alignment.bottomCenter,
+              //   colors: [
+              //     Constants.BACKGROUND_GRADIENT_START,
+              //     Constants.BACKGROUND_GRADIENT_END,
+              //   ],
+              // ),
+              ),
         ),
       ),
     );
@@ -101,12 +104,25 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
               hintStyle: TextStyle(fontSize: 14),
             ),
             onTap: () async {
+              AppThemeHelper.applyStatusBarThemeForDialog(context);
               final dateTime = DateTime.now();
-              final date = await showDatePicker(
-                  context: context,
-                  initialDate: dateTime,
-                  firstDate: dateTime,
-                  lastDate: dateTime.add(Duration(days: 365 * 3)));
+              final date = await showRoundedDatePicker(
+                context: context,
+                initialDate: dateTime,
+                firstDate: dateTime,
+                lastDate: dateTime.add(Duration(days: 365 * 3)),
+                fontFamily: 'Comfortaa',
+                borderRadius: 40,
+                theme: ThemeData(
+                  primaryColor: Theme.of(context).primaryColor,
+                  accentColor: Theme.of(context).accentColor,
+                  accentTextTheme: TextTheme(
+                    body2: TextStyle(color: Colors.white),
+                  ),
+                  primarySwatch: Colors.red,
+                ),
+              );
+              AppThemeHelper.applyStatusBarTheme(context);
               if (date != null) {
                 dateController.text = DateFormat.yMMMd().format(date);
               }
@@ -117,11 +133,25 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
             readOnly: true,
             style: TextStyle(fontSize: 14),
             onTap: () async {
-              final time = await showTimePicker(
-                  context: context, initialTime: TimeOfDay.now());
+              AppThemeHelper.applyStatusBarThemeForDialog(context);
+              final time = await showRoundedTimePicker(
+                context: context,
+                initialTime: TimeOfDay.now(),
+                fontFamily: 'Comfortaa',
+                borderRadius: 40,
+                theme: ThemeData(
+                  primaryColor: Theme.of(context).primaryColor,
+                  accentColor: Theme.of(context).accentColor,
+                  accentTextTheme: TextTheme(
+                    body2: TextStyle(color: Colors.white),
+                  ),
+                  primarySwatch: Colors.red,
+                ),
+              );
+              AppThemeHelper.applyStatusBarTheme(context);
               if (time != null) {
                 timeController.text =
-                    time.hour.toString() + ':' + time.minute.toString();
+                    time.hour.toString() + ' : ' + time.minute.toString();
                 setState(() {});
               }
             },
@@ -135,32 +165,42 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
               Text('Alert sound on?'),
               CircularCheckBox(
                 value: hasSound,
-                onChanged: (value) {},
+                onChanged: (value) {
+                  setState(() {
+                    hasSound = value;
+                  });
+                },
               ),
             ],
           ),
           Row(
             children: <Widget>[
               Text('Repeat reminder?'),
-              DropdownButton(
-                style: TextStyle(fontSize: 14, color: Colors.black87),
-                
-                value: 1,
-                items: [
-                  DropdownMenuItem(
-                    child: Text('Never'),
-                    value: 1,
-                  ),
-                  DropdownMenuItem(
-                    child: Text('Daily'),
-                    value: 2,
-                  ),
-                  DropdownMenuItem(
-                    child: Text('Weekly'),
-                    value: 3,
-                  ),
-                ],
-                onChanged: (value) {},
+              SizedBox(width: 20),
+              DropdownButtonHideUnderline(
+                child: DropdownButton(
+                  items: [
+                    DropdownMenuItem(
+                      child: Text('Never'),
+                      value: 1,
+                    ),
+                    DropdownMenuItem(
+                      child: Text('Daily'),
+                      value: 2,
+                    ),
+                    DropdownMenuItem(
+                      child: Text('Weekly'),
+                      value: 3,
+                    ),
+                  ],
+                  elevation: 1,
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black87,
+                      fontFamily: 'Comfortaa'),
+                  value: 1,
+                  onChanged: (value) {},
+                ),
               ),
             ],
           ),

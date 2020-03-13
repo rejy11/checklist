@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
+import '../../../helpers/app_theme_helper.dart';
 
 class TextFieldAndSubmitDialog extends StatefulWidget {
   final String inputHintText;
@@ -50,9 +51,8 @@ class _TextFieldAndSubmitDialogState extends State<TextFieldAndSubmitDialog> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-        
+    AppThemeHelper.applyStatusBarThemeForDialog(context);
+
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),

@@ -202,5 +202,9 @@ class ListsProvider extends ChangeNotifier {
     return list;
   }
 
-
+  void setReminder(ListReminderModel reminder) async {
+    if(reminder.listId != null) {
+      _listsRepository.insertReminder(reminder.toEntity());
+    }
+  }
 }

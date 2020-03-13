@@ -1,3 +1,4 @@
+import 'package:checklist/helpers/app_theme_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -52,9 +53,6 @@ class _ListsScreenState extends State<ListsScreen>
           elevation: 0,
           title: Text(
             widget.folderName,
-            style: TextStyle(
-              color: Colors.white,
-            ),
           ),
           centerTitle: true,
           actions: _buildAppBarActions(),
@@ -69,8 +67,8 @@ class _ListsScreenState extends State<ListsScreen>
               ),
             ],
             indicatorSize: TabBarIndicatorSize.label,
-            indicatorColor: Colors.white,
-            labelColor: Colors.white,
+            // indicatorColor: Colors.white,
+            // labelColor: Colors.white,
             unselectedLabelColor: Colors.black54,
             labelPadding: EdgeInsets.all(10),
           ),
@@ -91,15 +89,17 @@ class _ListsScreenState extends State<ListsScreen>
             ),
           ),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Constants.BACKGROUND_GRADIENT_START,
-                Constants.BACKGROUND_GRADIENT_END,
-              ],
-            ),
-          ),
+              image: DecorationImage(
+                  image: AssetImage('assets/background.jpg'), fit: BoxFit.none)
+              // gradient: LinearGradient(
+              //   begin: Alignment.topCenter,
+              //   end: Alignment.bottomCenter,
+              //   colors: [
+              //     Constants.BACKGROUND_GRADIENT_START,
+              //     Constants.BACKGROUND_GRADIENT_END,
+              //   ],
+              // ),
+              ),
         ),
       ),
     );
@@ -147,8 +147,7 @@ class _ListsScreenState extends State<ListsScreen>
 
   Future _sortOrderDialog(
       ListsSort sort, OrderBy order, bool pinFavourites) async {
-    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+    AppThemeHelper.applyStatusBarThemeForDialog(context);
     await showDialog(
       context: context,
       builder: (ctx) {
@@ -276,8 +275,7 @@ class _ListsScreenState extends State<ListsScreen>
           ),
         );
       },
-    ).then((_) => SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: Constants.BACKGROUND_GRADIENT_START)));
+    ).then((_) => AppThemeHelper.applyStatusBarTheme(context));
   }
 
   Future _newListDialog() async {
@@ -300,7 +298,6 @@ class _ListsScreenState extends State<ListsScreen>
           },
         );
       },
-    ).then((_) => SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: Constants.BACKGROUND_GRADIENT_START)));
+    ).then((_) => AppThemeHelper.applyStatusBarTheme(context));
   }
 }

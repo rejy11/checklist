@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:checklist/view/screens/list_reminder_screen.dart';
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
@@ -33,23 +35,55 @@ class ListsListItemWidget extends StatefulWidget {
 }
 
 class _ListsListItemWidgetState extends State<ListsListItemWidget>
-    with SingleTickerProviderStateMixin {
-  AnimationController _slideController;
+    with TickerProviderStateMixin {
+  AnimationController _slideController,
+      _heartPulseController,
+      _arrowAnimationController;
   Animation<Offset> _offset;
+  Animation<double> _heartPulseAnimation, _arrowAnimation;
   double _containerHeight;
-  double _expandedContentOpacity;
   bool _isContainerExpanded;
 
   @override
   void initState() {
-    _slideController = AnimationController(
-        duration: const Duration(milliseconds: 100), vsync: this);
-    _offset = Tween<Offset>(begin: Offset.zero, end: Offset(0.05, 0))
-        .animate(CurvedAnimation(parent: _slideController, curve: Curves.ease));
-    _containerHeight = 90;
-    _expandedContentOpacity = 0.0;
-    _isContainerExpanded = false;
     super.initState();
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    );
+    _offset = Tween<Offset>(begin: Offset.zero, end: Offset(0.05, 0)).animate(
+      CurvedAnimation(
+        parent: _slideController,
+        curve: Curves.ease,
+      ),
+    );
+
+    _heartPulseController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 100),
+    );
+    _heartPulseAnimation = Tween<double>(begin: 35, end: 40).animate(
+      CurvedAnimation(
+        curve: Curves.easeIn,
+        reverseCurve: Curves.easeOut,
+        parent: _heartPulseController,
+      ),
+    );
+
+    _arrowAnimationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 150),
+    );
+    _arrowAnimation = Tween(begin: 0.0, end: pi).animate(
+      CurvedAnimation(
+        parent: _arrowAnimationController,
+        curve: Curves.easeIn,
+        reverseCurve: Curves.easeIn,
+      ),
+    );
+
+    _containerHeight = 90;
+    _isContainerExpanded = false;
   }
 
   @override
@@ -86,36 +120,75 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
               child: Column(
                 children: <Widget>[
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Container(
-                        color: widget.list.favourite
-                            ? Theme.of(context).accentColor
-                            : Colors.transparent,
-                        height: 80,
-                        width: 0,
-                      ),
                       widget.selectListMode
                           ? Container(
                               width: 80,
                               child: CircularCheckBox(
-                                  value: widget.selected,
-                                  inactiveColor: Colors.black26,
-                                  onChanged: (value) {
-                                    Provider.of<ListsProvider>(context,
-                                            listen: false)
-                                        .toggleListSelected(widget.list);
-                                  }),
+                                value: widget.selected,
+                                inactiveColor: Colors.black26,
+                                onChanged: (value) {
+                                  Provider.of<ListsProvider>(context,
+                                          listen: false)
+                                      .toggleListSelected(widget.list);
+                                },
+                              ),
                             )
-                          : Container(
-                              width: 80,
-                              child: widget.list.favourite
-                                  ? Icon(
-                                      MaterialCommunityIcons.star,
-                                      color: Colors.yellowAccent[700],
-                                      size: 35,
-                                    )
-                                  : Container(),
-                            ),
+                          : widget.list.favourite
+                              ? AnimatedBuilder(
+                                  animation: _heartPulseController,
+                                  builder: (context, child) {
+                                    return Container(
+                                      width: 80,
+                                      child: GestureDetector(
+                                        child: Icon(
+                                          MaterialCommunityIcons.heart,
+                                          color: Theme.of(context).accentColor,
+                                          size: _heartPulseAnimation.value,
+                                        ),
+                                        onTap: () async {
+                                          await _heartPulseController.forward();
+                                          await _heartPulseController.reverse();
+                                          widget.list.favourite = false;
+                                          Provider.of<ListsProvider>(context,
+                                                  listen: false)
+                                              .updateList(widget.list);
+                                        },
+                                      ),
+                                    );
+                                  },
+                                )
+                              : AnimatedBuilder(
+                                  animation: _heartPulseAnimation,
+                                  builder: (context, child) {
+                                    return Opacity(
+                                      opacity: 0.4,
+                                      child: Container(
+                                        width: 80,
+                                        child: GestureDetector(
+                                          child: Icon(
+                                            MaterialCommunityIcons
+                                                .heart_outline,
+                                            color:
+                                                Theme.of(context).accentColor,
+                                            size: _heartPulseAnimation.value,
+                                          ),
+                                          onTap: () async {
+                                            await _heartPulseController
+                                                .forward();
+                                            await _heartPulseController
+                                                .reverse();
+                                            widget.list.favourite = true;
+                                            Provider.of<ListsProvider>(context,
+                                                    listen: false)
+                                                .updateList(widget.list);
+                                          },
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,7 +217,6 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
                                       widget.list.name,
                                       style: TextStyle(
                                         fontSize: 16,
-                                        // color: Theme.of(context).primaryColor,
                                       ),
                                       overflow: TextOverflow.fade,
                                     ),
@@ -162,7 +234,6 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
                                 '${DateFormat.yMMMd().format(widget.list.dateTimeCreated)}',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  // color: Theme.of(context).primaryColor,
                                 ),
                               ),
                             ),
@@ -174,80 +245,32 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
                         padding: const EdgeInsets.all(8.0),
                         child: Opacity(
                           opacity: widget.selectListMode ? 0.0 : 0.3,
-                          child: IconButton(
-                            icon: _isContainerExpanded
-                                ? Icon(MaterialCommunityIcons.chevron_up)
-                                : Icon(MaterialCommunityIcons.chevron_down),
-                            color: Colors.black,
-                            onPressed: () {
-                              setState(() {
-                                _isContainerExpanded
-                                    ? _containerHeight = 90
-                                    : _containerHeight = 190;
-                                _isContainerExpanded
-                                    ? _expandedContentOpacity = 0.0
-                                    : _expandedContentOpacity = 1.0;
-                                _isContainerExpanded = !_isContainerExpanded;
-                              });
-                            },
-                          ),
-                          // child: PopupMenuButton(
-                          //   icon: Icon(
-                          //     MaterialCommunityIcons.dots_vertical,
-                          //     color: Colors.black,
-                          //   ),
-                          //   enabled: !widget.selectListMode,
-                          //   itemBuilder: (context) {
-                          //     final textStyle = TextStyle(fontSize: 14);
-                          //     return [
-                          //       widget.list.active
-                          //           ? PopupMenuItem(
-                          //               child: Text('Move to inactive',
-                          //                   style: textStyle),
-                          //               value: 1,
-                          //             )
-                          //           : PopupMenuItem(
-                          //               child:
-                          //                   Text('Move to active', style: textStyle),
-                          //               value: 2,
-                          //             ),
-                          //       widget.list.favourite
-                          //           ? PopupMenuItem(
-                          //               child: Text('Unfavourite', style: textStyle),
-                          //               value: 3,
-                          //             )
-                          //           : PopupMenuItem(
-                          //               child: Text('Favourite', style: textStyle),
-                          //               value: 4,
-                          //             ),
-                          //       PopupMenuItem(
-                          //         child: Text(
-                          //           'Set reminder',
-                          //           style: textStyle,
-                          //         ),
-                          //         value: 5,
-                          //       ),
-                          //     ];
-                          //   },
-                          //   onSelected: (value) async {
-                          //     if (value == 1) {
-                          //       widget.list.active = false;
-                          //     } else if (value == 2) {
-                          //       widget.list.active = true;
-                          //     } else if (value == 3) {
-                          //       widget.list.favourite = false;
-                          //     } else if (value == 4) {
-                          //       widget.list.favourite = true;
-                          //     } else if (value == 5) {
-                          //       await _setReminderBottomSheet();
-                          //     }
-                          //     Provider.of<ListsProvider>(context, listen: false)
-                          //         .updateList(widget.list);
-                          //   },
-                          //   shape: RoundedRectangleBorder(
-                          //     borderRadius: BorderRadius.circular(15),
-                          //   ),
-                          // ),
+                          child: AnimatedBuilder(
+                              animation: _arrowAnimationController,
+                              builder: (ctx, child) {
+                                return Transform.rotate(
+                                  angle: _arrowAnimation.value,
+                                  child: IconButton(
+                                    icon: Icon(
+                                        MaterialCommunityIcons.chevron_down),
+                                    color: Colors.black,
+                                    onPressed: () {
+                                      setState(() {
+                                        _isContainerExpanded
+                                            ? _containerHeight = 90
+                                            : _containerHeight = 190;
+                                        _isContainerExpanded =
+                                            !_isContainerExpanded;
+                                        if (_isContainerExpanded) {
+                                          _arrowAnimationController.forward();
+                                        } else {
+                                          _arrowAnimationController.reverse();
+                                        }
+                                      });
+                                    },
+                                  ),
+                                );
+                              }),
                         ),
                       ),
                     ],
@@ -267,66 +290,31 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
   }
 
   Widget _buildExpandedContent() {
+    bool reminderSet = widget.list.reminder != null;
+    String formattedDate;
+    String formattedTime;
+    if (reminderSet) {
+      final reminderDateTime = widget.list.reminder.reminderDateTime;
+      formattedDate = DateFormat.yMMMd().format(reminderDateTime);
+      formattedTime = reminderDateTime.hour.toString() +
+          ':' +
+          reminderDateTime.minute.toString();
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: Column(
         children: <Widget>[
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //   mainAxisSize: MainAxisSize.min,
-          //   children: <Widget>[
-          //     Text('Reminder:'),
-          //     SizedBox(width: 10),
-          //     Expanded(
-          //       flex: 2,
-          //       child: TextField(
-          //         readOnly: true,
-          //         controller: dateController,
-          //         style: TextStyle(fontSize: 14),
-          //         onTap: () async {
-          //           final dateTime = DateTime.now();
-          //           final date = await showDatePicker(
-          //               context: context,
-          //               initialDate: dateTime,
-          //               firstDate: dateTime,
-          //               lastDate: dateTime.add(Duration(days: 365 * 3)));
-          //           if (date != null) {
-          //             dateController.text = DateFormat.yMMMd().format(date);
-          //           }
-          //         },
-          //         decoration: InputDecoration(
-          //           hintText: 'Date',
-          //           hintStyle: TextStyle(fontSize: 14),
-          //         ),
-          //       ),
-          //     ),
-          //     SizedBox(width: 10),
-          //     Expanded(
-          //       child: TextField(
-          //         readOnly: true,
-          //         controller: timeController,
-          //         style: TextStyle(fontSize: 14),
-          //         onTap: () async {
-          //           final time = await showTimePicker(
-          //               context: context, initialTime: TimeOfDay.now());
-          //           if (time != null) {
-          //             timeController.text =
-          //                 time.hour.toString() + ':' + time.minute.toString();
-          //             setState(() {});
-          //           }
-          //         },
-          //         decoration: InputDecoration(
-          //           hintText: 'Time',
-          //           hintStyle: TextStyle(fontSize: 14),
-          //         ),
-          //       ),
-          //     ),
-          //     Expanded(
-          //       child: SizedBox(),
-          //       flex: 2,
-          //     )
-          //   ],
-          // ),
+          reminderSet
+              ? Row(
+                  children: <Widget>[
+                    Text(formattedDate),
+                    Text(formattedTime),
+                  ],
+                )
+              : Row(
+                  children: <Widget>[],
+                ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[

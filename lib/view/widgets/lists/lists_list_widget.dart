@@ -1,3 +1,4 @@
+import 'package:checklist/helpers/app_theme_helper.dart';
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,7 +22,7 @@ class ListsListWidget extends StatefulWidget {
 }
 
 class _ListsListWidgetState extends State<ListsListWidget>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   ListsProvider _provider;
   double _actionPanelHeight = 50;
   double _actionPanelPosition;
@@ -146,8 +147,7 @@ class _ListsListWidgetState extends State<ListsListWidget>
   }
 
   _showDeleteListsDialog() async {
-    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+    AppThemeHelper.applyStatusBarThemeForDialog(context);
     await showDialog(
             context: context,
             builder: (ctx) {
@@ -224,8 +224,7 @@ class _ListsListWidgetState extends State<ListsListWidget>
                 ),
               );
             })
-        .then((_) => SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-            statusBarColor: Constants.BACKGROUND_GRADIENT_START)));
+        .then((_) => AppThemeHelper.applyStatusBarTheme(context));
   }
 
   void onListItemLongPress() {

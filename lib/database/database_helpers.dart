@@ -68,7 +68,7 @@ class DatabaseHelpers {
         dateTimeCreated: DateTime.now().subtract(Duration(days: 90)),
         favourite: false,
         active: true,
-        folderId: 1,
+        folderId: 1,        
       ),
       ListEntity(
         name: 'Project Tasks',
