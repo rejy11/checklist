@@ -1,11 +1,12 @@
 import '../entities/list_reminder_entity.dart';
+import '../enums/repeat_reminder.dart';
 import '../models/model_base.dart';
 
 class ListReminderModel extends ModelBase<ListReminderEntity> {
   int id;
   DateTime reminderDateTime;
   bool hasSound;
-  bool repeatReminder;
+  RepeatReminder repeatReminder;
   int listId;
 
   ListReminderModel({
@@ -22,7 +23,7 @@ class ListReminderModel extends ModelBase<ListReminderEntity> {
       id: id,
       reminderDateTime: reminderDateTime,
       hasSound: hasSound,
-      repeatReminder: repeatReminder,
+      repeatReminder: repeatReminder.index,
       listId: listId,
     );
   }

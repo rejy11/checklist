@@ -255,8 +255,7 @@ class LocalDatabase {
       return ListReminderEntity(
         id: reminder[0]['id'],
         reminderDateTime: DateTime.parse(reminder[0]['reminderDateTime']),
-        repeatReminder:
-            DatabaseHelpers.intToBoolConverter(reminder[0]['repeatReminder']),
+        repeatReminder: reminder[0]['repeatReminder'],
         hasSound: DatabaseHelpers.intToBoolConverter(reminder[0]['hasSound']),
         listId: reminder[0]['listId'],
       );

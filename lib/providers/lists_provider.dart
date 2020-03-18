@@ -1,3 +1,4 @@
+import 'package:checklist/enums/repeat_reminder.dart';
 import 'package:checklist/repository/user_settings_repository.dart';
 import 'package:flutter/foundation.dart';
 
@@ -56,7 +57,7 @@ class ListsProvider extends ChangeNotifier {
         listModel.reminder = ListReminderModel(
           id: reminder.id,
           reminderDateTime: reminder.reminderDateTime,
-          repeatReminder: reminder.repeatReminder,
+          repeatReminder: RepeatReminder.values[reminder.repeatReminder],
           hasSound: reminder.hasSound,
           listId: reminder.listId,
         );

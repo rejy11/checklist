@@ -1,16 +1,14 @@
+import 'package:checklist/providers/lists_provider.dart';
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
+import '../../models/list_reminder_model.dart';
+import '../../enums/repeat_reminder.dart';
 import '../../helpers/app_theme_helper.dart';
 import '../../models/list_model.dart';
-
-enum RepeatReminder {
-  Never,
-  Daily,
-  Weekly,
-}
 
 class ListReminderScreen extends StatefulWidget {
   final ListModel list;
@@ -26,6 +24,7 @@ class ListReminderScreen extends StatefulWidget {
 class _ListReminderScreenState extends State<ListReminderScreen> {
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
+  DateTime dateTimeSet;
   bool hasSound;
   RepeatReminder repeatReminder;
 
@@ -34,6 +33,7 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
     if (widget.list.reminder == null) {
       hasSound = false;
       repeatReminder = RepeatReminder.Never;
+      dateTimeSet = DateTime.now();
     } else {
       hasSound = widget.list.reminder.hasSound;
       // repeatReminder = widget.list.reminder.repeatReminder;
@@ -43,6 +43,8 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
           widget.list.reminder.reminderDateTime.hour.toString() +
               ':' +
               widget.list.reminder.reminderDateTime.minute.toString();
+      dateTimeSet = widget.list.dateTimeCreated;
+      ;
     }
 
     super.initState();
@@ -124,6 +126,8 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
               );
               AppThemeHelper.applyStatusBarTheme(context);
               if (date != null) {
+                final days = DateTime.now().difference(date);
+                dateTimeSet.add(Duration(days: days.inDays));
                 dateController.text = DateFormat.yMMMd().format(date);
               }
             },
@@ -150,6 +154,8 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
               );
               AppThemeHelper.applyStatusBarTheme(context);
               if (time != null) {
+                dateTimeSet
+                    .add(Duration(hours: time.hour, minutes: time.minute));
                 timeController.text =
                     time.hour.toString() + ' : ' + time.minute.toString();
                 setState(() {});
@@ -200,6 +206,51 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
                       fontFamily: 'Comfortaa'),
                   value: 1,
                   onChanged: (value) {},
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Expanded(
+                child: FlatButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  color: Theme.of(context).accentColor,
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: FlatButton(
+                  onPressed: () async {
+                    ListReminderModel reminder = ListReminderModel(
+                      listId: widget.list.id,
+                      hasSound: hasSound,
+                      reminderDateTime: dateTimeSet,
+                      repeatReminder: RepeatReminder.Never,
+                    );
+                    Provider.of<ListsProvider>(context, listen: false)
+                        .setReminder(reminder);
+                    Navigator.of(context).pop();
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  color: Theme.of(context).accentColor,
+                  child: Text(
+                    'Save',
+                    style: TextStyle(fontWeight: FontWeight.w800),
+                  ),
                 ),
               ),
             ],

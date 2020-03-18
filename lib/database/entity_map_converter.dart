@@ -43,7 +43,7 @@ extension ListReminderConversion on ListReminderEntity {
   Map<String, dynamic> toMap() {
     return {
       'id': this.id,
-      'reminderDateTime': this.reminderDateTime,
+      'reminderDateTime': this.reminderDateTime.toString(),
       'hasSound': this.hasSound,
       'repeatReminder': this.repeatReminder,
       'listId': this.listId,

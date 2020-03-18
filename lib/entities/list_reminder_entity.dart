@@ -2,7 +2,7 @@ class ListReminderEntity {
   final int id;
   final DateTime reminderDateTime;
   final bool hasSound;
-  final bool repeatReminder;
+  final int repeatReminder;
   final int listId;
 
   ListReminderEntity({
