@@ -29,7 +29,9 @@ class _FoldersListItemWidgetState extends State<FoldersListItemWidget>
   @override
   void initState() {
     _slideController = AnimationController(
-        duration: const Duration(milliseconds: 100), vsync: this);
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    );
     _offset = Tween<Offset>(begin: Offset.zero, end: Offset(0.05, 0))
         .animate(CurvedAnimation(parent: _slideController, curve: Curves.ease));
     super.initState();
@@ -100,7 +102,7 @@ class _FoldersListItemWidgetState extends State<FoldersListItemWidget>
             showDialog(
               context: context,
               builder: (ctx) {
-                return TextFieldAndSubmitDialog(                  
+                return TextFieldAndSubmitDialog(
                   'Folder Name',
                   'Cancel',
                   'Add',

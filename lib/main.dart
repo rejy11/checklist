@@ -80,7 +80,7 @@ class _AppState extends State<App> {
         debugShowCheckedModeBanner: false,
         title: 'Checklist',
         theme: ThemeData(
-          brightness: Brightness.light,
+          // brightness: Brightness.light,
           primaryColor: Constants.BACKGROUND_GRADIENT_START,
           // accentColor: Color.fromARGB(255, 255, 175, 160),
           accentColor: Colors.red[200],
@@ -93,7 +93,7 @@ class _AppState extends State<App> {
           fontFamily: 'Comfortaa',
           primaryColorLight: Color.fromARGB(255, 117, 125, 232),
           disabledColor: Colors.black26,
-          
+          // backgroundColor: Constants.BACKGROUND_GRADIENT_START,
         ),
         home: ListsScreen(1, 'Your Lists'),
       ),

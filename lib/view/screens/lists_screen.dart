@@ -47,9 +47,8 @@ class _ListsScreenState extends State<ListsScreen>
       child: Scaffold(
         extendBodyBehindAppBar: true,
         resizeToAvoidBottomInset: true,
-        backgroundColor: Colors.transparent,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          // backgroundColor: Constants.BACKGROUND_GRADIENT_START,
           elevation: 0,
           title: Text(
             widget.folderName,
@@ -66,7 +65,7 @@ class _ListsScreenState extends State<ListsScreen>
                 child: Text('Inactive'),
               ),
             ],
-            indicatorSize: TabBarIndicatorSize.label,
+            indicatorSize: TabBarIndicatorSize.tab,
             // indicatorColor: Colors.white,
             // labelColor: Colors.white,
             unselectedLabelColor: Colors.black54,
@@ -74,6 +73,7 @@ class _ListsScreenState extends State<ListsScreen>
           ),
         ),
         body: Container(
+          // color: Constants.BACKGROUND_GRADIENT_END,
           child: Padding(
             padding: const EdgeInsets.only(top: 110),
             child: MediaQuery.removePadding(
@@ -88,18 +88,6 @@ class _ListsScreenState extends State<ListsScreen>
               ),
             ),
           ),
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/background.jpg'), fit: BoxFit.none)
-              // gradient: LinearGradient(
-              //   begin: Alignment.topCenter,
-              //   end: Alignment.bottomCenter,
-              //   colors: [
-              //     Constants.BACKGROUND_GRADIENT_START,
-              //     Constants.BACKGROUND_GRADIENT_END,
-              //   ],
-              // ),
-              ),
         ),
       ),
     );

@@ -272,4 +272,14 @@ class LocalDatabase {
     final db = await database;
     await db.delete('ListReminder', where: 'id = ?', whereArgs: [reminderId]);
   }
+
+  Future updateListReminder(ListReminderEntity reminder) async {
+    final db = await database;
+    await db.update(
+      'ListReminder',
+      reminder.toMap(),
+      where: 'id = ?',
+      whereArgs: [reminder.id],
+    );
+  }
 }

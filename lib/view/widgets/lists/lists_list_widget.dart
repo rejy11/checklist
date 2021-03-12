@@ -69,7 +69,7 @@ class _ListsListWidgetState extends State<ListsListWidget>
   }
 
   Widget _buildListViewContainer(List<ListModel> lists, bool selectListMode) {
-    return AnimatedContainer(
+    return AnimatedContainer(      
       duration: _actionPanelSlideDuration,
       curve: Curves.easeOutCubic,
       padding: EdgeInsets.only(top: _listViewPadding),

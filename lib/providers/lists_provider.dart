@@ -52,8 +52,10 @@ class ListsProvider extends ChangeNotifier {
         numberOfItems: await _listsRepository.getNumberOfItemsInList(list.id),
         folderId: list.folderId,
       );
-      final reminder = await _listsRepository.getReminder(list.id); // get reminder
-      if(reminder != null) { // if reminder is not null
+      final reminder =
+          await _listsRepository.getReminder(list.id); // get reminder
+      if (reminder != null) {
+        // if reminder is not null
         listModel.reminder = ListReminderModel(
           id: reminder.id,
           reminderDateTime: reminder.reminderDateTime,
@@ -203,9 +205,19 @@ class ListsProvider extends ChangeNotifier {
     return list;
   }
 
-  void setReminder(ListReminderModel reminder) async {
-    if(reminder.listId != null) {
-      _listsRepository.insertReminder(reminder.toEntity());
+  Future setReminder(ListReminderModel reminder) async {
+    if (reminder.listId != null) {
+      await _listsRepository.insertReminder(reminder.toEntity());
     }
+  }
+
+  Future updateReminder(ListReminderModel reminder) async {
+    if (reminder.listId != null) {
+      await _listsRepository.updateReminder(reminder.toEntity());
+    }
+  }
+
+  Future deleteReminder(int reminderId) async {
+    await _listsRepository.deleteReminder(reminderId);
   }
 }

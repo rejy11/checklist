@@ -27,16 +27,25 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
   DateTime dateTimeSet;
   bool hasSound;
   RepeatReminder repeatReminder;
+  bool isDateSet = false;
+  bool isTimeSet = false;
+  bool isDirty = false;
+  bool isNewReminder;
+  double _saveButtonContainerWidth;
 
   @override
   void initState() {
     if (widget.list.reminder == null) {
+      isNewReminder = true;
       hasSound = false;
       repeatReminder = RepeatReminder.Never;
       dateTimeSet = DateTime.now();
     } else {
+      isNewReminder = false;
+      isTimeSet = true;
+      isDateSet = true;
       hasSound = widget.list.reminder.hasSound;
-      // repeatReminder = widget.list.reminder.repeatReminder;
+      repeatReminder = widget.list.reminder.repeatReminder;
       dateController.text =
           DateFormat.yMMMd().format(widget.list.reminder.reminderDateTime);
       timeController.text =
@@ -44,7 +53,6 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
               ':' +
               widget.list.reminder.reminderDateTime.minute.toString();
       dateTimeSet = widget.list.dateTimeCreated;
-      ;
     }
 
     super.initState();
@@ -52,6 +60,8 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _saveButtonContainerWidth = MediaQuery.of(context).size.width;
+
     return SafeArea(
       child: Scaffold(
         extendBodyBehindAppBar: true,
@@ -96,7 +106,9 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          SizedBox(height: 40),
           Text(widget.list.name, style: TextStyle(fontSize: 18)),
+          SizedBox(height: 40),
           TextField(
             controller: dateController,
             readOnly: true,
@@ -107,8 +119,8 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
             ),
             onTap: () async {
               AppThemeHelper.applyStatusBarThemeForDialog(context);
-              final dateTime = DateTime.now();
-              final date = await showRoundedDatePicker(
+              var dateTime = DateTime.now();
+              var date = await showRoundedDatePicker(
                 context: context,
                 initialDate: dateTime,
                 firstDate: dateTime,
@@ -126,12 +138,20 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
               );
               AppThemeHelper.applyStatusBarTheme(context);
               if (date != null) {
+                dateTimeSet = DateTime.now();
                 final days = DateTime.now().difference(date);
                 dateTimeSet.add(Duration(days: days.inDays));
                 dateController.text = DateFormat.yMMMd().format(date);
+                setState(() {
+                  isDateSet = true;
+                  if (!isNewReminder) {
+                    isDirty = true;
+                  }
+                });
               }
             },
           ),
+          SizedBox(height: 20),
           TextField(
             controller: timeController,
             readOnly: true,
@@ -154,11 +174,23 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
               );
               AppThemeHelper.applyStatusBarTheme(context);
               if (time != null) {
+                dateTimeSet = DateTime.now();
+                String minuteText;
                 dateTimeSet
                     .add(Duration(hours: time.hour, minutes: time.minute));
-                timeController.text =
-                    time.hour.toString() + ' : ' + time.minute.toString();
-                setState(() {});
+
+                if (time.minute < 10) {
+                  minuteText = '0' + time.minute.toString();
+                } else {
+                  minuteText = time.minute.toString();
+                }
+                timeController.text = time.hour.toString() + ' : ' + minuteText;
+                setState(() {
+                  isTimeSet = true;
+                  if (!isNewReminder) {
+                    isDirty = true;
+                  }
+                });
               }
             },
             decoration: InputDecoration(
@@ -166,6 +198,7 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
               hintStyle: TextStyle(fontSize: 14),
             ),
           ),
+          SizedBox(height: 30),
           Row(
             children: <Widget>[
               Text('Alert sound on?'),
@@ -174,89 +207,159 @@ class _ListReminderScreenState extends State<ListReminderScreen> {
                 onChanged: (value) {
                   setState(() {
                     hasSound = value;
+                    if (!isNewReminder) {
+                      isDirty = true;
+                    }
                   });
                 },
               ),
             ],
           ),
+          SizedBox(height: 30),
           Row(
             children: <Widget>[
               Text('Repeat reminder?'),
               SizedBox(width: 20),
-              DropdownButtonHideUnderline(
-                child: DropdownButton(
-                  items: [
-                    DropdownMenuItem(
-                      child: Text('Never'),
-                      value: 1,
-                    ),
-                    DropdownMenuItem(
-                      child: Text('Daily'),
-                      value: 2,
-                    ),
-                    DropdownMenuItem(
-                      child: Text('Weekly'),
-                      value: 3,
-                    ),
+              PopupMenuButton(
+                child: Row(
+                  children: <Widget>[
+                    Text(repeatReminder.toString().split('.')[1]),
+                    Icon(Icons.arrow_drop_down),
                   ],
-                  elevation: 1,
-                  style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black87,
-                      fontFamily: 'Comfortaa'),
-                  value: 1,
-                  onChanged: (value) {},
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 20),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              Expanded(
-                child: FlatButton(
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  color: Theme.of(context).accentColor,
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(fontWeight: FontWeight.w800),
-                  ),
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: FlatButton(
-                  onPressed: () async {
-                    ListReminderModel reminder = ListReminderModel(
-                      listId: widget.list.id,
-                      hasSound: hasSound,
-                      reminderDateTime: dateTimeSet,
-                      repeatReminder: RepeatReminder.Never,
+                itemBuilder: (context) {
+                  return RepeatReminder.values.map((r) {
+                    return PopupMenuItem(
+                      child: Text(
+                        r.toString().split('.')[1],
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      value: r,
                     );
-                    Provider.of<ListsProvider>(context, listen: false)
-                        .setReminder(reminder);
-                    Navigator.of(context).pop();
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  color: Theme.of(context).accentColor,
-                  child: Text(
-                    'Save',
-                    style: TextStyle(fontWeight: FontWeight.w800),
-                  ),
+                  }).toList();
+                },
+                onSelected: (RepeatReminder value) {
+                  setState(() {
+                    repeatReminder = value;
+                    if (!isNewReminder) {
+                      isDirty = true;
+                    }
+                  });
+                },
+                elevation: 1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
                 ),
+                offset: Offset(100, 0),
               ),
             ],
           ),
+          Expanded(child: SizedBox()),
+          isNewReminder
+              ? AnimatedContainer(
+                 duration: Duration(milliseconds: 300),
+                  width: _saveButtonContainerWidth,
+                  child: FlatButton(
+                    onPressed: _saveReminder,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    color: Theme.of(context).accentColor,
+                    child: Text(
+                      'Save',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                )
+              : Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    !isNewReminder
+                        ? Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                              child: FlatButton(
+                                onPressed: widget.list.reminder != null
+                                    ? () async {
+                                        await Provider.of<ListsProvider>(
+                                                context,
+                                                listen: false)
+                                            .deleteReminder(
+                                                widget.list.reminder.id);
+                                        Navigator.of(context).pop();
+                                      }
+                                    : null,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                color: Theme.of(context).accentColor,
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    _canSaveReminder()
+                        ? Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                              child: FlatButton(
+                                onPressed: _saveReminder,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                color: Theme.of(context).accentColor,
+                                child: Text(
+                                  'Save',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                  ],
+                ),
         ],
       ),
     );
+  }
+
+  void _saveReminder() async {
+    ListReminderModel reminder = ListReminderModel(
+      listId: widget.list.id,
+      hasSound: hasSound,
+      reminderDateTime: dateTimeSet,
+      repeatReminder: repeatReminder,
+    );
+    if (isNewReminder) {
+      await Provider.of<ListsProvider>(context, listen: false)
+          .setReminder(reminder);
+    } else {
+      await Provider.of<ListsProvider>(context, listen: false)
+          .updateReminder(reminder);
+    }
+    Navigator.of(context).pop();
+  }
+
+  bool _canSaveReminder() {
+    if (isNewReminder) {
+      return isDateSet && isTimeSet;
+    } else {
+      return isDirty;
+    }
   }
 }

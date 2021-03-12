@@ -437,9 +437,13 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
                     borderRadius: BorderRadius.circular(15),
                   ),
                   color: Theme.of(context).accentColor,
-                  child: Text('Edit name',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+                  child: Text(
+                    'Edit name',
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white),
+                  ),
                 ),
               ),
               Padding(
@@ -450,9 +454,13 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
                     borderRadius: BorderRadius.circular(15),
                   ),
                   color: Theme.of(context).accentColor,
-                  child: Text('Move to inactive',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+                  child: Text(
+                    'Move to inactive',
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white),
+                  ),
                 ),
               ),
               Padding(
@@ -463,9 +471,13 @@ class _ListsListItemWidgetState extends State<ListsListItemWidget>
                     borderRadius: BorderRadius.circular(15),
                   ),
                   color: Theme.of(context).accentColor,
-                  child: Text('Delete',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+                  child: Text(
+                    'Delete',
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white),
+                  ),
                 ),
               ),
             ],

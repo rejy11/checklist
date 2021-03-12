@@ -38,4 +38,8 @@ class ListsRepository {
   Future deleteReminder(int reminderId) async {
     await _database.deleteListReminder(reminderId);
   }
+
+  Future updateReminder(ListReminderEntity reminder) async {
+    await _database.updateListReminder(reminder);
+  }
 }

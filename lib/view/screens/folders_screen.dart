@@ -104,10 +104,10 @@ class FoldersScreen extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Constants.BACKGROUND_GRADIENT_START,
-                      Constants.BACKGROUND_GRADIENT_END,
-                    ],
+                    // colors: [
+                    //   Constants.BACKGROUND_GRADIENT_START,
+                    //   Constants.BACKGROUND_GRADIENT_END,
+                    // ],
                   ),
                 ),
               ),
